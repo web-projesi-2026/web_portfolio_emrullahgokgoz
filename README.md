@@ -1,12 +1,16 @@
 🖤 VOGUE LINE — Koleksiyon 2026
+
 Modern, lüks ve animasyon odaklı bir frontend e-ticaret arayüzü.
 Tek dosya yapısıyla geliştirilmiş olup güçlü UI/UX deneyimi sunar.
 
 https://kullaniciadi.github.io/proje-adi/
 
 📸 Proje Önizleme
+
 ![preview](assets/preview.png)
+
 🚀 Özellikler
+
 🎨 Lüks tasarım (Dark + Gold UI)
 🖱️ Custom cursor sistemi
 🧠 Vanilla JS ile dinamik yapı
@@ -16,19 +20,20 @@ https://kullaniciadi.github.io/proje-adi/
 💬 Yorum slider
 📩 Newsletter sistemi
 🎞️ Gelişmiş animasyonlar
+
 🧱 Proje Yapısı
 📦 vogue-line
  ┣ 📄 index.html
  ┣ 📁 assets (opsiyonel)
  ┃ ┗ 🖼️ preview.png
- ┗ 📄 README.md
+ ┗ 📄 README.md                                                                                                                                                     
 
-🧩 Bölümler
-Bölüm	Açıklama
-Navbar	Menü + Sepet
-Hero	Ana tanıtım alanı
-Categories	Kategori kartları
-Products	Ürün listesi
+🧩 Bölümler                                                                                                                                                         
+Bölüm	Açıklama                                                                                                                                                      
+Navbar	Menü + Sepet                                                                                                                                                 
+Hero	Ana tanıtım alanı                                                                                                                                              
+Categories	Kategori kartları                                                                                                                                        
+Products	Ürün listesi                                                                                    
 Featured	Öne çıkan alan
 Testimonials	Yorum slider
 Newsletter	Mail abonelik
