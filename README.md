@@ -2,15 +2,9 @@
 Modern, lüks ve animasyon odaklı bir frontend e-ticaret arayüzü.
 Tek dosya yapısıyla geliştirilmiş olup güçlü UI/UX deneyimi sunar.
 
-🌐 Canlı Demo
-
-👉 Buraya link ekle (örn: GitHub Pages)
-
 https://kullaniciadi.github.io/proje-adi/
+
 📸 Proje Önizleme
-
-Buraya ekran görüntüsü ekleyebilirsin
-
 ![preview](assets/preview.png)
 🚀 Özellikler
 🎨 Lüks tasarım (Dark + Gold UI)
@@ -28,6 +22,7 @@ Buraya ekran görüntüsü ekleyebilirsin
  ┣ 📁 assets (opsiyonel)
  ┃ ┗ 🖼️ preview.png
  ┗ 📄 README.md
+
 🧩 Bölümler
 Bölüm	Açıklama
 Navbar	Menü + Sepet
@@ -40,10 +35,12 @@ Newsletter	Mail abonelik
 Footer	Alt bilgi
 Cart	Sepet paneli
 Checkout	Sipariş formu
+
 🛠️ Kullanılan Teknolojiler
 HTML5
 CSS3 (Grid, Flexbox, Animations)
 Vanilla JavaScript
+
 🎨 Tasarım Sistemi
 Renkler
 --bg: #0a0a08;
