@@ -108,8 +108,6 @@ nav.scrolled {
   height:1px; background:var(--gold);
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
-
-  
 }
 .nav-links a:hover { color:var(--gold); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -853,8 +851,12 @@ footer {
 
 <!-- Navigation -->
 <nav id="main-nav">
-  <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
+  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
   <ul class="nav-links">
+    <li><a href="index.html">Koleksiyon</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="projects.html">Projeler</a></li>
+    <li><a href="contact.html">İletişim</a></li>
    <li><a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
   <span>Koleksiyonu Keşfet</span>
 </a>
@@ -1046,10 +1048,10 @@ footer {
       <div class="footer-col">
         <h4>Bilgi</h4>
         <ul class="footer-links">
-          <li><a href="#">Hakkımızda</a></li>
-          <li><a href="#">Sürdürülebilirlik</a></li>
-          <li><a href="#">Kariyer</a></li>
-          <li><a href="#">Blog</a></li>
+          <li><a href="about.html">Hakkımızda</a></li>
+          <li><a href="about.html#sustainability">Sürdürülebilirlik</a></li>
+          <li><a href="projects.html">Projeler</a></li>
+          <li><a href="contact.html">İletişim</a></li>
           <li><a href="#">Basın</a></li>
         </ul>
       </div>
@@ -1060,7 +1062,7 @@ footer {
           <li><a href="#">Kargo Bilgisi</a></li>
           <li><a href="#">Beden Rehberi</a></li>
           <li><a href="#">SSS</a></li>
-          <li><a href="#">İletişim</a></li>
+          <li><a href="contact.html">İletişim</a></li>
         </ul>
       </div>
     </div>
