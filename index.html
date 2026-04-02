@@ -108,6 +108,8 @@ nav.scrolled {
   height:1px; background:var(--gold);
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
+
+  
 }
 .nav-links a:hover { color:var(--gold); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -853,10 +855,12 @@ footer {
 <nav id="main-nav">
   <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
   <ul class="nav-links">
-    <li><a href="#" onclick="showPage('home')">Koleksiyon</a></li>
-<li><a href="/about.html">Hakkımızda</a></li>
-<li><a href="/projects.html">Projeler</a></li>
-<li><a href="/contact.html">İletişim</a></li>
+   <li><a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
+  <span>Koleksiyonu Keşfet</span>
+</a>
+<li><a href="about.html">Hakkımızda</a></li>
+<li><a href="projects.html">Projeler</a></li>
+<li><a href="contact.html">İletişim</a></li>
   </ul>
   <div class="nav-cart">
     <button class="cart-btn" onclick="openCart()">
@@ -1181,7 +1185,7 @@ footer {
           <h2 class="success-title">SİPARİŞ ALINDI!</h2>
           <p class="success-sub">Teşekkürler! Siparişiniz başarıyla alındı.<br>Kargo takip bilgisi e-posta ile gönderilecek.</p>
           <br><br>
-          <a href="#" onclick="showPage('home')" class="btn-primary"> style="margin:0 auto;display:block;text-decoration:none;"><span>Alışverişe Devam Et</span></a>
+          <a href="index.html" class="btn-primary" style="margin:0 auto;display:block;text-decoration:none;"><span>Alışverişe Devam Et</span></a>
         </div>
       </div>
     </div>
