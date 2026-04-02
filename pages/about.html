@@ -1,1 +1,709 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hakkımızda — VOGUE LINE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & VARIABLES ─────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:       #0a0a08;
+  --bg2:      #111110;
+  --cream:    #f0ead8;
+  --gold:     #c9a84c;
+  --gold2:    #e8c97a;
+  --text:     #e8e4d8;
+  --muted:    #7a7668;
+  --accent:   #d4526e;
+  --white:    #faf8f3;
+  --ff-head:  'Bebas Neue', sans-serif;
+  --ff-serif: 'Cormorant Garamond', serif;
+  --ff-body:  'DM Sans', sans-serif;
+  --ease:     cubic-bezier(.25,.46,.45,.94);
+  --ease-out: cubic-bezier(0,.55,.45,1);
+}
 
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ff-body);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ─────────────────────────────────────── */
+#cursor {
+  width: 12px; height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: fixed; top:0; left:0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .15s var(--ease), background .2s, width .2s, height .2s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(201,168,76,.5);
+  border-radius: 50%;
+  position: fixed; top:0; left:0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform .4s var(--ease), opacity .3s;
+}
+
+/* ── SCROLLBAR ─────────────────────────────────────────── */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
+
+/* ── NOISE OVERLAY ─────────────────────────────────────── */
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9997; opacity:.6;
+}
+
+/* ── NAVIGATION ────────────────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 1.5rem 4rem;
+  background: linear-gradient(to bottom, rgba(10,10,8,.95), transparent);
+  backdrop-filter: blur(0px);
+  transition: background .4s, backdrop-filter .4s, padding .3s;
+}
+nav.scrolled {
+  background: rgba(10,10,8,.92);
+  backdrop-filter: blur(20px);
+  padding: 1rem 4rem;
+  border-bottom: 1px solid rgba(201,168,76,.1);
+}
+.nav-logo {
+  font-family: var(--ff-head);
+  font-size: 1.8rem;
+  letter-spacing: .2em;
+  color: var(--gold);
+  text-decoration: none;
+  cursor: none;
+}
+.nav-logo span { color: var(--text); }
+.nav-links { display:flex; gap:2.5rem; list-style:none; }
+.nav-links a {
+  font-size:.78rem; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--text); text-decoration:none; cursor:none;
+  position: relative; padding-bottom:4px;
+  transition: color .3s;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height:1px; background:var(--gold);
+  transform: scaleX(0); transform-origin: right;
+  transition: transform .35s var(--ease);
+}
+.nav-links a:hover, .nav-links a.active { color:var(--gold); }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+.nav-cta {
+  background: none;
+  border: 1px solid rgba(201,168,76,.4);
+  color: var(--gold);
+  padding: .5rem 1.2rem;
+  font-family: var(--ff-body);
+  font-size: .75rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: none;
+  text-decoration: none;
+  transition: background .3s, border-color .3s, color .3s;
+}
+.nav-cta:hover { background: var(--gold); color: var(--bg); }
+
+/* ── PAGE HERO ─────────────────────────────────────────── */
+.page-hero {
+  min-height: 70vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding: 8rem 4rem 6rem;
+}
+.page-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 40%, rgba(201,168,76,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 10% 80%, rgba(212,82,110,.04) 0%, transparent 50%),
+    var(--bg);
+}
+.page-hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 60% 80% at 50% 50%, black, transparent);
+}
+.page-hero-content {
+  text-align: center;
+  position: relative; z-index: 2;
+  max-width: 800px;
+}
+.page-eyebrow {
+  font-size: .72rem; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 2rem;
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp .8s var(--ease) .3s forwards;
+}
+.page-eyebrow::before, .page-eyebrow::after {
+  content: ''; width: 40px; height: 1px; background: var(--gold); opacity: .4;
+}
+.page-hero-title {
+  font-family: var(--ff-head);
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: .92; letter-spacing: .04em;
+  color: var(--cream); margin-bottom: 1.5rem;
+  opacity: 0; transform: translateY(40px);
+  animation: fadeUp .9s var(--ease) .5s forwards;
+}
+.page-hero-title em {
+  font-family: var(--ff-serif); font-style: italic;
+  color: var(--gold); font-size: .75em;
+}
+.page-hero-sub {
+  font-family: var(--ff-serif); font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--muted); max-width: 600px; margin: 0 auto;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp .8s var(--ease) .75s forwards;
+}
+
+/* ── SECTION SHARED ────────────────────────────────────── */
+.section-tag {
+  display: inline-block; font-size: .68rem; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--gold);
+  border: 1px solid rgba(201,168,76,.3); padding: .35rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.section-title {
+  font-family: var(--ff-head); font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: .05em; line-height: 1; color: var(--cream);
+}
+.section-title em {
+  font-family: var(--ff-serif); font-style: italic;
+  color: var(--gold); font-size: .9em;
+}
+
+/* ── STORY SECTION ─────────────────────────────────────── */
+.story-section {
+  padding: 10rem 4rem;
+  background: var(--bg2);
+}
+.story-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8rem; align-items: center;
+}
+.story-visual {
+  position: relative;
+}
+.story-frame {
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, #1a1512 0%, #2d2419 40%, #1a1512 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10rem; opacity: .12;
+  position: relative; overflow: hidden;
+}
+.story-frame::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom right, rgba(201,168,76,.08) 0%, transparent 50%),
+    linear-gradient(to top left, rgba(201,168,76,.04) 0%, transparent 50%);
+}
+.story-frame-border {
+  position: absolute; inset: -1px;
+  border: 1px solid rgba(201,168,76,.2);
+}
+.story-accent-line {
+  position: absolute; top: 2rem; left: -2rem;
+  width: 4rem; height: 1px; background: var(--gold);
+}
+.story-year-tag {
+  position: absolute; bottom: -1.5rem; right: -1.5rem;
+  background: var(--bg); border: 1px solid rgba(201,168,76,.2);
+  padding: 1.2rem 1.8rem;
+  font-family: var(--ff-head); font-size: 2.5rem; letter-spacing: .1em;
+  color: var(--gold);
+}
+.story-text {}
+.story-tag-line {
+  font-family: var(--ff-serif); font-style: italic;
+  font-size: .9rem; letter-spacing: .1em; color: var(--gold);
+  margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;
+}
+.story-tag-line::before {
+  content: ''; width: 30px; height: 1px; background: var(--gold); opacity: .4;
+}
+.story-heading {
+  font-family: var(--ff-head); font-size: clamp(2.5rem, 5vw, 3.8rem);
+  letter-spacing: .05em; line-height: 1.05;
+  color: var(--cream); margin-bottom: 2rem;
+}
+.story-heading em {
+  font-family: var(--ff-serif); font-style: italic;
+  color: var(--gold);
+}
+.story-body {
+  color: var(--muted); line-height: 1.85; font-size: .95rem;
+  margin-bottom: 1.5rem;
+}
+.story-divider {
+  width: 60px; height: 1px; background: rgba(201,168,76,.3);
+  margin: 2.5rem 0;
+}
+.story-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2rem; margin-top: 3rem;
+}
+.stat-item {}
+.stat-num {
+  font-family: var(--ff-head); font-size: 2.5rem; letter-spacing: .05em;
+  color: var(--gold); line-height: 1;
+}
+.stat-label {
+  font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); margin-top: .4rem;
+}
+
+/* ── VALUES SECTION ─────────────────────────────────────── */
+.values-section {
+  padding: 10rem 4rem;
+  background: var(--bg);
+}
+.values-header {
+  text-align: center; margin-bottom: 6rem;
+}
+.values-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 3rem; max-width: 1200px; margin: 0 auto;
+}
+.value-card {
+  border: 1px solid rgba(201,168,76,.1);
+  padding: 3rem 2.5rem;
+  background: var(--bg2);
+  position: relative; overflow: hidden;
+  transition: border-color .4s, transform .4s var(--ease);
+}
+.value-card:hover {
+  border-color: rgba(201,168,76,.3);
+  transform: translateY(-6px);
+}
+.value-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent);
+  transform: scaleX(0); transition: transform .5s var(--ease);
+}
+.value-card:hover::before { transform: scaleX(1); }
+.value-icon {
+  font-size: 2.5rem; margin-bottom: 1.5rem; opacity: .7;
+}
+.value-title {
+  font-family: var(--ff-head); font-size: 1.8rem; letter-spacing: .1em;
+  color: var(--cream); margin-bottom: 1rem;
+}
+.value-desc {
+  color: var(--muted); line-height: 1.75; font-size: .9rem;
+}
+
+/* ── TEAM SECTION ───────────────────────────────────────── */
+.team-section {
+  padding: 10rem 4rem;
+  background: var(--bg2);
+}
+.team-header {
+  text-align: center; margin-bottom: 6rem;
+}
+.team-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 2rem; max-width: 1200px; margin: 0 auto;
+}
+.team-card {
+  cursor: none;
+  transition: transform .4s var(--ease);
+}
+.team-card:hover { transform: translateY(-8px); }
+.team-photo {
+  aspect-ratio: 3/4; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 5rem; opacity: .15;
+  margin-bottom: 1.5rem; position: relative; overflow: hidden;
+}
+.team-photo::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(10,10,8,.8) 100%);
+}
+.team-photo-1 { background: linear-gradient(135deg,#1a1512,#2d2419); }
+.team-photo-2 { background: linear-gradient(135deg,#0f1318,#1c2533); }
+.team-photo-3 { background: linear-gradient(135deg,#1a1214,#25181c); }
+.team-photo-4 { background: linear-gradient(135deg,#141a12,#1c2518); }
+.team-name {
+  font-family: var(--ff-serif); font-size: 1.2rem;
+  color: var(--text); margin-bottom: .3rem;
+}
+.team-role {
+  font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ── SUSTAINABILITY ─────────────────────────────────────── */
+.sustain-section {
+  padding: 10rem 4rem;
+  background: var(--bg);
+  position: relative; overflow: hidden;
+}
+.sustain-section::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(201,168,76,.04) 0%, transparent 70%);
+}
+.sustain-inner {
+  max-width: 900px; margin: 0 auto; text-align: center;
+  position: relative; z-index: 1;
+}
+.sustain-title {
+  font-family: var(--ff-head); font-size: clamp(3rem, 7vw, 5.5rem);
+  letter-spacing: .05em; color: var(--cream); margin-bottom: 2rem;
+}
+.sustain-title em {
+  font-family: var(--ff-serif); font-style: italic; color: var(--gold);
+}
+.sustain-text {
+  font-family: var(--ff-serif); font-style: italic;
+  font-size: 1.2rem; color: var(--muted); line-height: 1.8;
+  margin-bottom: 4rem;
+}
+.sustain-pillars {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 4rem;
+}
+.pillar {
+  padding: 3rem 2rem;
+  background: var(--bg2);
+  border: 1px solid rgba(201,168,76,.08);
+}
+.pillar-icon { font-size: 2rem; margin-bottom: 1rem; opacity: .6; }
+.pillar-label {
+  font-family: var(--ff-head); font-size: 1.3rem; letter-spacing: .1em;
+  color: var(--cream); margin-bottom: .8rem;
+}
+.pillar-text { font-size: .85rem; color: var(--muted); line-height: 1.7; }
+
+/* ── FOOTER ────────────────────────────────────────────── */
+footer {
+  background: var(--bg); border-top: 1px solid rgba(201,168,76,.1);
+  padding: 5rem 4rem 2rem;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 4rem; max-width: 1400px; margin: 0 auto; padding-bottom: 4rem;
+  border-bottom: 1px solid rgba(201,168,76,.08);
+}
+.footer-brand .nav-logo { display: block; margin-bottom: 1.2rem; }
+.footer-desc { color: var(--muted); line-height: 1.7; font-size: .9rem; max-width: 280px; }
+.footer-socials { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.social-link {
+  width: 36px; height: 36px; border: 1px solid rgba(201,168,76,.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); text-decoration: none; cursor: none;
+  font-size: .85rem; transition: all .3s;
+}
+.social-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.05); }
+.footer-col h4 {
+  font-size: .72rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.5rem;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: .8rem; }
+.footer-links a {
+  color: var(--muted); text-decoration: none; font-size: .9rem;
+  cursor: none; transition: color .3s;
+}
+.footer-links a:hover { color: var(--gold); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1400px; margin: 2rem auto 0;
+  font-size: .75rem; color: var(--muted); letter-spacing: .05em;
+}
+
+/* ── ANIMATIONS ────────────────────────────────────────── */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1100px) {
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .values-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:768px) {
+  nav { padding: 1.2rem 1.5rem; }
+  .nav-links { display: none; }
+  .story-inner { grid-template-columns: 1fr; gap: 4rem; }
+  .story-stats { grid-template-columns: 1fr 1fr; }
+  .values-grid, .team-grid, .sustain-pillars { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .page-hero, .story-section, .values-section, .team-section, .sustain-section, footer { padding: 4rem 1.5rem; }
+  .page-hero { padding-top: 8rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Koleksiyon</a></li>
+    <li><a href="about.html" class="active">Hakkımızda</a></li>
+    <li><a href="projects.html">Projeler</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+  </ul>
+  <div>
+    <a href="contact.html" class="nav-cta">Bize Ulaşın</a>
+  </div>
+</nav>
+
+<!-- Page Hero -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-grid"></div>
+  <div class="page-hero-content">
+    <div class="page-eyebrow">Kuruluş 2012</div>
+    <h1 class="page-hero-title">
+      BİZ KİM<br><em>Değerlerimiz</em>
+    </h1>
+    <p class="page-hero-sub">Zarafeti bir yaşam biçimi olarak benimseyen insanlar için moda yaratan bir ekibiz</p>
+  </div>
+</section>
+
+<!-- Story Section -->
+<section class="story-section">
+  <div class="story-inner">
+    <div class="story-visual reveal">
+      <div class="story-frame">👗
+        <div class="story-frame-border"></div>
+      </div>
+      <div class="story-accent-line"></div>
+      <div class="story-year-tag">2012</div>
+    </div>
+    <div class="story-text reveal reveal-delay-2">
+      <div class="story-tag-line">Bizim Hikâyemiz</div>
+      <h2 class="story-heading">
+        MODA'YI<br>YENIDEN<br><em>Keşfediyoruz</em>
+      </h2>
+      <div class="story-divider"></div>
+      <p class="story-body">
+        VogueLine, 2012 yılında İstanbul'da küçük bir atölyede doğdu. Kurucularımız Ayşe ve Kerem Özdemir, modanın salt bir ürün değil; bir his, bir kimlik ve bir sanat olduğuna inanıyorlardı.
+      </p>
+      <p class="story-body">
+        O günden bu yana dünyaca ünlü kumaş üreticileriyle çalışarak, el işçiliğini modern tasarım anlayışıyla birleştiren koleksiyonlar üretiyoruz. Her parçamız, giyen kişinin özgünlüğünü ön plana çıkarmak için titizlikle tasarlanıyor.
+      </p>
+      <div class="story-stats">
+        <div class="stat-item">
+          <div class="stat-num">12+</div>
+          <div class="stat-label">Yıl Deneyim</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">304</div>
+          <div class="stat-label">Parça / Sezon</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">48K</div>
+          <div class="stat-label">Mutlu Müşteri</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values Section -->
+<section class="values-section">
+  <div class="values-header reveal">
+    <div class="section-tag">Değerlerimiz</div>
+    <h2 class="section-title">Bizi Biz<br><em>Yapan Şeyler</em></h2>
+  </div>
+  <div class="values-grid">
+    <div class="value-card reveal reveal-delay-1">
+      <div class="value-icon">✦</div>
+      <div class="value-title">KALİTE</div>
+      <p class="value-desc">Her ürünümüz, en yüksek kalite standartlarıyla üretilir. Kumaşlarımızı dünyanın dört bir yanındaki seçkin tedarikçilerden temin ediyoruz.</p>
+    </div>
+    <div class="value-card reveal reveal-delay-2">
+      <div class="value-icon">◆</div>
+      <div class="value-title">ÖZGÜNLÜK</div>
+      <p class="value-desc">Trendleri takip etmek yerine trendleri belirleriz. Tasarımcı ekibimiz, her sezon yeni ve cesur bir estetik dil oluşturur.</p>
+    </div>
+    <div class="value-card reveal reveal-delay-3">
+      <div class="value-icon">⬡</div>
+      <div class="value-title">SÜRDÜRÜLEBILIRLIK</div>
+      <p class="value-desc">Gezegenimize karşı sorumluluğumuzun bilincindeyiz. Üretim süreçlerimizi çevre dostu yöntemlerle sürdürüyoruz.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section">
+  <div class="team-header reveal">
+    <div class="section-tag">Ekibimiz</div>
+    <h2 class="section-title">Arkasındaki<br><em>Yaratıcılar</em></h2>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal reveal-delay-1">
+      <div class="team-photo team-photo-1">👩</div>
+      <div class="team-name">Ayşe Özdemir</div>
+      <div class="team-role">Kurucu & Kreatif Direktör</div>
+    </div>
+    <div class="team-card reveal reveal-delay-2">
+      <div class="team-photo team-photo-2">👨</div>
+      <div class="team-name">Kerem Özdemir</div>
+      <div class="team-role">Kurucu & CEO</div>
+    </div>
+    <div class="team-card reveal reveal-delay-3">
+      <div class="team-photo team-photo-3">👩</div>
+      <div class="team-name">Leila Saran</div>
+      <div class="team-role">Baş Tasarımcı</div>
+    </div>
+    <div class="team-card reveal reveal-delay-4">
+      <div class="team-photo team-photo-4">👨</div>
+      <div class="team-name">Mert Aydın</div>
+      <div class="team-role">Üretim Direktörü</div>
+    </div>
+  </div>
+</section>
+
+<!-- Sustainability -->
+<section class="sustain-section" id="sustainability">
+  <div class="sustain-inner reveal">
+    <div class="section-tag">Sürdürülebilirlik</div>
+    <h2 class="sustain-title">
+      YARINI<br><em>Düşünüyoruz</em>
+    </h2>
+    <p class="sustain-text">
+      Moda güzel olmak zorunda — hem estetik olarak, hem de etik olarak. VogueLine olarak üretimde kullandığımız her malzeme, her prosedür ve her seçim sürdürülebilirlik ilkemizle örtüşmek zorunda.
+    </p>
+    <div class="sustain-pillars">
+      <div class="pillar">
+        <div class="pillar-icon">🌿</div>
+        <div class="pillar-label">EKO KUMAŞ</div>
+        <p class="pillar-text">Organik pamuk ve geri dönüştürülmüş polyester kullanımı ile üretim ayak izimizi azaltıyoruz.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">♻️</div>
+        <div class="pillar-label">DÖNGÜSEL ÜRETİM</div>
+        <p class="pillar-text">Kumaş artıklarını sıfıra indiriyoruz. Her artık parça, bir sonraki koleksiyona katkı sağlıyor.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">🤝</div>
+        <div class="pillar-label">ETİK İŞÇİLİK</div>
+        <p class="pillar-text">Tedarik zincirimizin her halkasında adil çalışma koşulları ve hakkaniyetli ücret garanti altındadır.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+      <p class="footer-desc">Moda dünyasının en seçkin parçalarını sizlerle buluşturuyoruz. Kalite, zarafet ve özgünlük — VogueLine'ın üç temel değeri.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-link">f</a>
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">ig</a>
+        <a href="#" class="social-link">tw</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Mağaza</h4>
+      <ul class="footer-links">
+        <li><a href="index.html">Koleksiyon</a></li>
+        <li><a href="index.html">Kadın</a></li>
+        <li><a href="index.html">Erkek</a></li>
+        <li><a href="index.html">Aksesuar</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Bilgi</h4>
+      <ul class="footer-links">
+        <li><a href="about.html">Hakkımızda</a></li>
+        <li><a href="about.html#sustainability">Sürdürülebilirlik</a></li>
+        <li><a href="projects.html">Projeler</a></li>
+        <li><a href="contact.html">İletişim</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Destek</h4>
+      <ul class="footer-links">
+        <li><a href="#">İade & Değişim</a></li>
+        <li><a href="#">Kargo Bilgisi</a></li>
+        <li><a href="#">Beden Rehberi</a></li>
+        <li><a href="contact.html">İletişim</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 VogueLine. Tüm hakları saklıdır.</span>
+    <span>Gizlilik Politikası · Kullanım Şartları</span>
+  </div>
+</footer>
+
+<script>
+/* Cursor */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top = e.clientY + 'px';
+  }, 80);
+});
+
+/* Nav scroll */
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+/* Reveal on scroll */
+function revealOnScroll() {
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight * .88) {
+      el.classList.add('visible');
+    }
+  });
+}
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
+</script>
+</body>
+</html>
