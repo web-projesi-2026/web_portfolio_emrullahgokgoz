@@ -272,12 +272,3 @@ function formatCard(inp){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ closeModalDirect(); closeCart(); }
 });
-function loadPage(page) {
-  const content = document.getElementById('main-content');
-  const pages = {
-    about: '<h1>Hakkımızda</h1><p>İçerik buraya...</p>',
-    projects: '<h1>Projeler</h1><p>İçerik buraya...</p>',
-    contact: '<h1>İletişim</h1><p>İçerik buraya...</p>'
-  };
-  content.innerHTML = pages[page] || '<p>Sayfa bulunamadı</p>';
-}
