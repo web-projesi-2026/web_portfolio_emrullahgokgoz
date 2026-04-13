@@ -470,6 +470,77 @@ footer {
   .page-hero, .story-section, .values-section, .team-section, .sustain-section, footer { padding: 4rem 1.5rem; }
   .page-hero { padding-top: 8rem; }
 }
+
+/* ── HAMBURGER MENU ─────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1100;
+}
+.hamburger span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform .35s var(--ease), opacity .25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE NAV OVERLAY ─────────────────────────────────── */
+.mobile-nav {
+  position: fixed; inset: 0;
+  background: rgba(10,10,8,.97);
+  backdrop-filter: blur(20px);
+  z-index: 1050;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2.5rem;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-12px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.mobile-nav.open {
+  opacity: 1; pointer-events: all; transform: translateY(0);
+}
+.mobile-nav a {
+  font-family: var(--ff-head);
+  font-size: clamp(2.2rem, 8vw, 3.5rem);
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+  transition: color .3s;
+  position: relative;
+}
+.mobile-nav a:hover, .mobile-nav a.active { color: var(--gold); }
+.mobile-nav-close {
+  position: absolute; top: 1.8rem; right: 1.8rem;
+  background: none; border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold); width: 40px; height: 40px;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .3s;
+}
+.mobile-nav-close:hover { background: rgba(201,168,76,.1); }
+@media (max-width: 900px) {
+  .nav-links { display: none !important; }
+  .hamburger { display: flex; }
+}
+@media (max-width: 768px) {
+  img, video, iframe, svg { max-width: 100%; height: auto; }
+  * { box-sizing: border-box; }
+  nav { padding: 1rem 1.2rem !important; }
+  nav.scrolled { padding: .8rem 1.2rem !important; }
+}
+@media (max-width: 480px) {
+  nav { padding: .9rem 1rem !important; }
+}
+
 </style>
 </head>
 <body>
@@ -478,6 +549,14 @@ footer {
 <div id="cursor-ring"></div>
 
 <!-- Navigation -->
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" onclick="closeMenu()">✕</button>
+  <a href="index.html" onclick="closeMenu()">Koleksiyon</a>
+  <a href="about.html" onclick="closeMenu()">Hakkımızda</a>
+  <a href="projects.html" onclick="closeMenu()">Projeler</a>
+  <a href="contact.html" onclick="closeMenu()">İletişim</a>
+</div>
 <nav id="main-nav">
   <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
   <ul class="nav-links">
@@ -489,6 +568,7 @@ footer {
   <div>
     <a href="contact.html" class="nav-cta">Bize Ulaşın</a>
   </div>
+<button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- Page Hero -->
@@ -704,6 +784,23 @@ function revealOnScroll() {
 }
 window.addEventListener('scroll', revealOnScroll);
 revealOnScroll();
+
+/* ── HAMBURGER MENU ─────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+function toggleMenu() {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow = '';
+}
+if (hamburger) hamburger.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
 </script>
 </body>
 </html>

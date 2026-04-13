@@ -108,6 +108,8 @@ nav.scrolled {
   height:1px; background:var(--gold);
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
+
+  
 }
 .nav-links a:hover { color:var(--gold); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -841,6 +843,77 @@ footer {
   .form-row { grid-template-columns:1fr; }
   .hero-actions { flex-direction:column; gap:1rem; }
 }
+
+/* ── HAMBURGER MENU ─────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1100;
+}
+.hamburger span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform .35s var(--ease), opacity .25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE NAV OVERLAY ─────────────────────────────────── */
+.mobile-nav {
+  position: fixed; inset: 0;
+  background: rgba(10,10,8,.97);
+  backdrop-filter: blur(20px);
+  z-index: 1050;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2.5rem;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-12px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.mobile-nav.open {
+  opacity: 1; pointer-events: all; transform: translateY(0);
+}
+.mobile-nav a {
+  font-family: var(--ff-head);
+  font-size: clamp(2.2rem, 8vw, 3.5rem);
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+  transition: color .3s;
+  position: relative;
+}
+.mobile-nav a:hover, .mobile-nav a.active { color: var(--gold); }
+.mobile-nav-close {
+  position: absolute; top: 1.8rem; right: 1.8rem;
+  background: none; border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold); width: 40px; height: 40px;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .3s;
+}
+.mobile-nav-close:hover { background: rgba(201,168,76,.1); }
+@media (max-width: 900px) {
+  .nav-links { display: none !important; }
+  .hamburger { display: flex; }
+}
+@media (max-width: 768px) {
+  img, video, iframe, svg { max-width: 100%; height: auto; }
+  * { box-sizing: border-box; }
+  nav { padding: 1rem 1.2rem !important; }
+  nav.scrolled { padding: .8rem 1.2rem !important; }
+}
+@media (max-width: 480px) {
+  nav { padding: .9rem 1rem !important; }
+}
+
 </style>
 </head>
 <body>
@@ -850,18 +923,31 @@ footer {
 <div id="cursor-ring"></div>
 
 <!-- Navigation -->
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" onclick="closeMenu()">✕</button>
+  <a href="index.html" onclick="closeMenu()">Koleksiyon</a>
+  <a href="about.html" onclick="closeMenu()">Hakkımızda</a>
+  <a href="projects.html" onclick="closeMenu()">Projeler</a>
+  <a href="contact.html" onclick="closeMenu()">İletişim</a>
+</div>
 <nav id="main-nav">
-  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+  <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
   <ul class="nav-links">
-  <li><a href="../about.html">Hakkımızda</a></li>
-  <li><a href="../projects.html">Projeler</a></li>
-  <li><a href="../contact.html">İletişim</a></li>
+   <li><a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
+  <span>Koleksiyonu Keşfet</span>
+</a>
+<li><a href="about.html">Hakkımızda</a></li>
+<li><a href="projects.html">Projeler</a></li>
+<li><a href="contact.html">İletişim</a></li>
+  </ul>
   <div class="nav-cart">
     <button class="cart-btn" onclick="openCart()">
       Sepet
       <span class="cart-badge" id="cart-badge">0</span>
     </button>
   </div>
+<button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- HOME PAGE -->
@@ -1040,10 +1126,10 @@ footer {
       <div class="footer-col">
         <h4>Bilgi</h4>
         <ul class="footer-links">
-          <li><a href="about.html">Hakkımızda</a></li>
-          <li><a href="about.html#sustainability">Sürdürülebilirlik</a></li>
-          <li><a href="projects.html">Projeler</a></li>
-          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="#">Hakkımızda</a></li>
+          <li><a href="#">Sürdürülebilirlik</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="#">Blog</a></li>
           <li><a href="#">Basın</a></li>
         </ul>
       </div>
@@ -1054,7 +1140,7 @@ footer {
           <li><a href="#">Kargo Bilgisi</a></li>
           <li><a href="#">Beden Rehberi</a></li>
           <li><a href="#">SSS</a></li>
-          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="#">İletişim</a></li>
         </ul>
       </div>
     </div>
@@ -1523,6 +1609,23 @@ function formatCard(inp){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ closeModalDirect(); closeCart(); }
 });
+
+/* ── HAMBURGER MENU ─────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+function toggleMenu() {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow = '';
+}
+if (hamburger) hamburger.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
 </script>
 </body>
 </html>

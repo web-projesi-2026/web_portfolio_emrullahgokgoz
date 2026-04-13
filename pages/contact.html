@@ -471,6 +471,77 @@ footer {
   .page-hero { padding: 7rem 1.5rem 4rem; }
   .form-submit { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
 }
+
+/* ── HAMBURGER MENU ─────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1100;
+}
+.hamburger span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform .35s var(--ease), opacity .25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE NAV OVERLAY ─────────────────────────────────── */
+.mobile-nav {
+  position: fixed; inset: 0;
+  background: rgba(10,10,8,.97);
+  backdrop-filter: blur(20px);
+  z-index: 1050;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2.5rem;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-12px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.mobile-nav.open {
+  opacity: 1; pointer-events: all; transform: translateY(0);
+}
+.mobile-nav a {
+  font-family: var(--ff-head);
+  font-size: clamp(2.2rem, 8vw, 3.5rem);
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+  transition: color .3s;
+  position: relative;
+}
+.mobile-nav a:hover, .mobile-nav a.active { color: var(--gold); }
+.mobile-nav-close {
+  position: absolute; top: 1.8rem; right: 1.8rem;
+  background: none; border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold); width: 40px; height: 40px;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .3s;
+}
+.mobile-nav-close:hover { background: rgba(201,168,76,.1); }
+@media (max-width: 900px) {
+  .nav-links { display: none !important; }
+  .hamburger { display: flex; }
+}
+@media (max-width: 768px) {
+  img, video, iframe, svg { max-width: 100%; height: auto; }
+  * { box-sizing: border-box; }
+  nav { padding: 1rem 1.2rem !important; }
+  nav.scrolled { padding: .8rem 1.2rem !important; }
+}
+@media (max-width: 480px) {
+  nav { padding: .9rem 1rem !important; }
+}
+
 </style>
 </head>
 <body>
@@ -478,19 +549,25 @@ footer {
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" onclick="closeMenu()">✕</button>
+  <a href="index.html" onclick="closeMenu()">Koleksiyon</a>
+  <a href="about.html" onclick="closeMenu()">Hakkımızda</a>
+  <a href="projects.html" onclick="closeMenu()">Projeler</a>
+  <a href="contact.html" onclick="closeMenu()">İletişim</a>
+</div>
 <nav id="main-nav">
-  <a href="../index.html" class="nav-logo">VOGUE<span>LINE</span></a>
-<a href="../about.html">Hakkımızda</a>
-<a href="projects.html">Projeler</a>  <!-- Aynı klasörde, değişmez -->
-<a href="../index.html">Koleksiyon</a>
-<a href="../index.html">Kadın</a>
-<a href="../index.html">Erkek</a>
-<a href="../index.html">Aksesuar</a>
-<a href="../about.html">Hakkımızda</a>
-<a href="../about.html#sustainability">Sürdürülebilirlik</a>
-<a href="projects.html">Projeler</a>  <!-- Aynı klasürde, değişmez -->
-<a href="contact.html">İletişim</a>  <!-- Aynı klasörde, değişmez -->
-<a href="../index.html" style="...">Koleksiyona Dön →</a>
+  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Koleksiyon</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="projects.html">Projeler</a></li>
+    <li><a href="contact.html" class="active">İletişim</a></li>
+  </ul>
+  <div style="width:120px;"></div>
+<button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
+</nav>
 
 <!-- Hero -->
 <section class="page-hero">
@@ -539,7 +616,7 @@ footer {
           <div class="contact-icon">✉️</div>
           <div class="contact-card-text">
             <div class="contact-card-label">E-posta</div>
-            <div class="contact-card-val">info@vogueline.com.tr</div>
+            <div class="contact-card-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1c8cfc7cee1d7cec6d4c4cdc8cfc48fc2cecc8fd5d3">[email&#160;protected]</a></div>
             <div class="contact-card-note">24 saat içinde yanıt</div>
           </div>
         </div>
@@ -695,7 +772,24 @@ footer {
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+/* ── HAMBURGER MENU ─────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+function toggleMenu() {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow = '';
+}
+if (hamburger) hamburger.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+</script><script>
 const cur = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
 document.addEventListener('mousemove', e => {
@@ -729,12 +823,4 @@ function sendMessage() {
   const name = document.getElementById('f-name').value;
   if (!name.trim() || !email.includes('@')) {
     document.getElementById('f-name').style.borderColor = !name.trim() ? 'var(--accent)' : '';
-    document.getElementById('f-email').style.borderColor = !email.includes('@') ? 'var(--accent)' : '';
-    return;
-  }
-  document.getElementById('contact-form').style.display = 'none';
-  document.getElementById('form-success').style.display = 'block';
-}
-</script>
-</body>
-</html>
+    document.getElementById('f-email').style.bord
