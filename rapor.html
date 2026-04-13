@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haftalık Rapor — VOGUE LINE | Web Proje Yönetimi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:       #0a0a08;
+  --bg2:      #111110;
+  --cream:    #f0ead8;
+  --gold:     #c9a84c;
+  --gold2:    #e8c97a;
+  --text:     #e8e4d8;
+  --muted:    #7a7668;
+  --accent:   #d4526e;
+  --green:    #4caf76;
+  --ff-head:  'Bebas Neue', sans-serif;
+  --ff-serif: 'Cormorant Garamond', serif;
+  --ff-body:  'DM Sans', sans-serif;
+  --ease:     cubic-bezier(.25,.46,.45,.94);
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ff-body);
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9997; opacity:.6;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 1.2rem 4rem;
+  background: rgba(10,10,8,.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201,168,76,.1);
+}
+.nav-logo {
+  font-family: var(--ff-head);
+  font-size: 1.6rem; letter-spacing: .2em;
+  color: var(--gold); text-decoration: none;
+}
+.nav-logo span { color: var(--text); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a {
+  font-size:.75rem; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--muted); text-decoration:none;
+  transition: color .3s;
+}
+.nav-links a:hover { color: var(--gold); }
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 6px;
+}
+.hamburger span {
+  display: block; width: 26px; height: 2px;
+  background: var(--gold); border-radius: 2px;
+  transition: transform .35s var(--ease), opacity .25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-nav {
+  position: fixed; inset: 0;
+  background: rgba(10,10,8,.97); backdrop-filter: blur(20px);
+  z-index: 1050; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2.5rem;
+  opacity: 0; pointer-events: none; transform: translateY(-12px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.mobile-nav.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+.mobile-nav a {
+  font-family: var(--ff-head); font-size: clamp(2rem, 8vw, 3.5rem);
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text); text-decoration: none; transition: color .3s;
+}
+.mobile-nav a:hover { color: var(--gold); }
+.mobile-nav-close {
+  position: absolute; top: 1.8rem; right: 1.8rem;
+  background: none; border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold); width: 40px; height: 40px;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  padding: 8rem 4rem 4rem;
+  background: linear-gradient(to bottom, rgba(201,168,76,.04), transparent);
+  border-bottom: 1px solid rgba(201,168,76,.1);
+  position: relative; overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, black, transparent);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;
+}
+.header-tag {
+  display: inline-block; font-size: .68rem; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--gold);
+  border: 1px solid rgba(201,168,76,.3); padding: .35rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.header-title {
+  font-family: var(--ff-head);
+  font-size: clamp(3rem, 8vw, 6rem);
+  letter-spacing: .05em; line-height: .95;
+  color: var(--cream); margin-bottom: 1rem;
+}
+.header-title em {
+  font-family: var(--ff-serif); font-style: italic;
+  color: var(--gold); font-size: .75em;
+}
+.header-meta {
+  display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;
+}
+.header-meta-item {
+  font-size: .75rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.header-meta-item strong { color: var(--gold); }
+
+/* ── MAIN LAYOUT ── */
+.main-content {
+  max-width: 1200px; margin: 0 auto;
+  padding: 5rem 4rem;
+  display: grid; grid-template-columns: 1fr 320px;
+  gap: 4rem; align-items: start;
+}
+.report-body {}
+.report-sidebar { position: sticky; top: 100px; }
+
+/* ── WEEK CARD ── */
+.week-card {
+  background: var(--bg2);
+  border: 1px solid rgba(201,168,76,.1);
+  margin-bottom: 3rem;
+  overflow: hidden;
+  animation: fadeUp .6s var(--ease) both;
+}
+.week-card:nth-child(2) { animation-delay: .1s; }
+.week-card:nth-child(3) { animation-delay: .2s; }
+.week-card:nth-child(4) { animation-delay: .3s; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+.week-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background: rgba(201,168,76,.04);
+  border-bottom: 1px solid rgba(201,168,76,.08);
+  cursor: pointer;
+  transition: background .3s;
+}
+.week-card-header:hover { background: rgba(201,168,76,.07); }
+.week-card-header-left { display: flex; align-items: center; gap: 1.5rem; }
+.week-num {
+  font-family: var(--ff-head); font-size: 2.5rem; letter-spacing: .05em;
+  color: rgba(201,168,76,.25); line-height: 1;
+}
+.week-info {}
+.week-title {
+  font-family: var(--ff-head); font-size: 1.3rem; letter-spacing: .08em;
+  color: var(--cream);
+}
+.week-date {
+  font-size: .72rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--muted); margin-top: .2rem;
+}
+.week-status {
+  display: flex; align-items: center; gap: .6rem;
+  font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+  padding: .35rem .9rem;
+  border: 1px solid;
+}
+.status-done { color: var(--green); border-color: rgba(76,175,118,.3); background: rgba(76,175,118,.06); }
+.status-active { color: var(--gold); border-color: rgba(201,168,76,.3); background: rgba(201,168,76,.06); }
+.status-pending { color: var(--muted); border-color: rgba(122,118,104,.2); background: transparent; }
+.week-chevron {
+  color: var(--muted); font-size: .9rem;
+  transition: transform .3s;
+}
+.week-card.open .week-chevron { transform: rotate(180deg); }
+
+.week-card-body {
+  display: none;
+  padding: 2.5rem;
+}
+.week-card.open .week-card-body { display: block; }
+
+/* ── REPORT SECTIONS ── */
+.report-section { margin-bottom: 2.5rem; }
+.report-section:last-child { margin-bottom: 0; }
+.section-heading {
+  font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .8rem;
+}
+.section-heading::after {
+  content: ''; flex: 1; height: 1px; background: rgba(201,168,76,.12);
+}
+
+/* Task list */
+.task-list { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+.task-item {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: .7rem 1rem;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(201,168,76,.06);
+  border-left: 2px solid transparent;
+  transition: border-color .3s;
+}
+.task-item.done { border-left-color: var(--green); }
+.task-item.active { border-left-color: var(--gold); }
+.task-item.pending { border-left-color: rgba(122,118,104,.3); }
+.task-check {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; margin-top: 1px;
+}
+.task-check.done { background: var(--green); color: #fff; }
+.task-check.active { background: rgba(201,168,76,.2); color: var(--gold); border: 1px solid var(--gold); }
+.task-check.pending { background: rgba(122,118,104,.1); color: var(--muted); border: 1px solid rgba(122,118,104,.3); }
+.task-text { font-size: .88rem; color: var(--text); line-height: 1.5; }
+.task-text small { display: block; color: var(--muted); font-size: .78rem; margin-top: .2rem; }
+
+/* Notes textarea area */
+.note-box {
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(201,168,76,.1);
+  border-left: 2px solid rgba(201,168,76,.3);
+  padding: 1.2rem 1.5rem;
+  font-family: var(--ff-serif); font-style: italic;
+  color: var(--muted); line-height: 1.75; font-size: .95rem;
+}
+
+/* Progress bar */
+.progress-wrap {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: .8rem;
+}
+.progress-label { font-size: .78rem; color: var(--muted); min-width: 100px; }
+.progress-track {
+  flex: 1; height: 4px; background: rgba(255,255,255,.06); border-radius: 2px;
+}
+.progress-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(to right, var(--gold), var(--gold2));
+  transition: width 1s var(--ease);
+}
+.progress-pct { font-size: .75rem; color: var(--gold); min-width: 36px; text-align: right; }
+
+/* Code snippet highlight */
+.code-tag {
+  display: inline-block; font-family: monospace; font-size: .75rem;
+  background: rgba(201,168,76,.08); color: var(--gold2);
+  border: 1px solid rgba(201,168,76,.15); padding: .15rem .5rem;
+  border-radius: 2px;
+}
+
+/* ── SIDEBAR ── */
+.sidebar-card {
+  background: var(--bg2);
+  border: 1px solid rgba(201,168,76,.1);
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+.sidebar-card h3 {
+  font-family: var(--ff-head); font-size: 1.2rem; letter-spacing: .08em;
+  color: var(--cream); margin-bottom: 1.5rem;
+  padding-bottom: .8rem; border-bottom: 1px solid rgba(201,168,76,.08);
+}
+.info-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: .8rem; font-size: .85rem;
+}
+.info-row:last-child { margin-bottom: 0; }
+.info-key { color: var(--muted); }
+.info-val { color: var(--text); text-align: right; max-width: 55%; }
+.info-val a { color: var(--gold); text-decoration: none; }
+.info-val a:hover { text-decoration: underline; }
+
+/* Overall progress donut area */
+.donut-wrap {
+  display: flex; flex-direction: column; align-items: center; padding: 1rem 0;
+}
+.donut-circle {
+  width: 100px; height: 100px; position: relative;
+  margin-bottom: 1rem;
+}
+.donut-circle svg { transform: rotate(-90deg); }
+.donut-track { fill: none; stroke: rgba(255,255,255,.05); stroke-width: 8; }
+.donut-fill {
+  fill: none; stroke: var(--gold); stroke-width: 8;
+  stroke-dasharray: 283; stroke-dashoffset: 99;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.2s var(--ease);
+}
+.donut-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.donut-pct { font-family: var(--ff-head); font-size: 1.6rem; color: var(--gold); line-height: 1; }
+.donut-sub { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+.page-links { display: flex; flex-direction: column; gap: .6rem; }
+.page-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .7rem 1rem;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(201,168,76,.08);
+  text-decoration: none;
+  transition: border-color .3s, background .3s;
+}
+.page-link:hover { border-color: rgba(201,168,76,.3); background: rgba(201,168,76,.04); }
+.page-link-name { font-size: .82rem; color: var(--text); }
+.page-link-badge {
+  font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .2rem .6rem;
+}
+.badge-live { color: var(--green); border: 1px solid rgba(76,175,118,.3); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg); border-top: 1px solid rgba(201,168,76,.1);
+  padding: 2.5rem 4rem;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+  font-size: .75rem; color: var(--muted);
+}
+.footer-logo { font-family: var(--ff-head); font-size: 1.2rem; color: var(--gold); }
+.footer-logo span { color: var(--muted); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .main-content { grid-template-columns: 1fr; padding: 3rem 2rem; }
+  .report-sidebar { position: static; }
+  .page-header { padding: 7rem 2rem 3rem; }
+}
+@media (max-width: 600px) {
+  .header-meta { flex-direction: column; gap: .8rem; }
+  .week-card-header { flex-wrap: wrap; gap: 1rem; }
+  footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+  .page-header { padding: 7rem 1.2rem 3rem; }
+  .main-content { padding: 2rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" onclick="closeMenu()">✕</button>
+  <a href="index.html" onclick="closeMenu()">Koleksiyon</a>
+  <a href="about.html" onclick="closeMenu()">Hakkımızda</a>
+  <a href="projects.html" onclick="closeMenu()">Projeler</a>
+  <a href="contact.html" onclick="closeMenu()">İletişim</a>
+  <a href="rapor.html" onclick="closeMenu()" style="color:var(--gold)">Rapor</a>
+</div>
+
+<!-- Nav -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Koleksiyon</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="projects.html">Projeler</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+    <li><a href="rapor.html" style="color:var(--gold)">Rapor</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="header-inner">
+    <div class="header-tag">Web Proje Yönetimi — 2025 / 2026</div>
+    <h1 class="header-title">
+      HAFTALIK<br><em>İlerleme Raporu</em>
+    </h1>
+    <div class="header-meta">
+      <div class="header-meta-item">Öğrenci: <strong>Ad Soyad</strong></div>
+      <div class="header-meta-item">Proje: <strong>VogueLine Moda Sitesi</strong></div>
+      <div class="header-meta-item">Dönem: <strong>2025 – 2026 Bahar</strong></div>
+      <div class="header-meta-item">Son Güncelleme: <strong>13 Nisan 2026</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- Main -->
+<div class="main-content">
+
+  <!-- Report Weeks -->
+  <div class="report-body">
+
+    <!-- Week 1 -->
+    <div class="week-card open">
+      <div class="week-card-header" onclick="toggleWeek(this)">
+        <div class="week-card-header-left">
+          <div class="week-num">01</div>
+          <div class="week-info">
+            <div class="week-title">PROJE KURULUMU &amp; PLANLAMA</div>
+            <div class="week-date">1 – 7 Nisan 2026</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div class="week-status status-done">✓ Tamamlandı</div>
+          <div class="week-chevron">▼</div>
+        </div>
+      </div>
+      <div class="week-card-body">
+        <div class="report-section">
+          <div class="section-heading">Yapılan Görevler</div>
+          <ul class="task-list">
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                Proje klasör yapısı ve GitHub deposu oluşturuldu
+                <small>index.html, about.html, projects.html, contact.html, style.css, script.js dosyaları hazırlandı</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                HTML5 semantik yapısı kuruldu — <span class="code-tag">&lt;nav&gt;</span> <span class="code-tag">&lt;section&gt;</span> <span class="code-tag">&lt;footer&gt;</span>
+                <small>Her sayfa için ayrı HTML dosyası oluşturuldu</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                CSS değişkenleri (Custom Properties) ile renk ve font sistemi kuruldu
+                <small>--gold, --bg, --cream, --text değişkenleri tanımlandı</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                Google Fonts entegrasyonu — Bebas Neue, Cormorant Garamond, DM Sans
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="report-section">
+          <div class="section-heading">Haftalık Not</div>
+          <div class="note-box">
+            Projenin genel konsepti "VogueLine" adında lüks bir moda markası sitesi olarak belirlendi. Dark tema, altın rengi aksanlar ve serif/sans-serif font kombinasyonu estetik dil olarak seçildi. Dosya yapısı ve temel HTML iskeleti bu haftada tamamlandı.
+          </div>
+        </div>
+        <div class="report-section">
+          <div class="section-heading">Teknoloji Kullanımı</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <span class="code-tag">HTML5</span>
+            <span class="code-tag">CSS3</span>
+            <span class="code-tag">CSS Variables</span>
+            <span class="code-tag">Google Fonts</span>
+            <span class="code-tag">Git</span>
+            <span class="code-tag">GitHub</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="week-card open">
+      <div class="week-card-header" onclick="toggleWeek(this)">
+        <div class="week-card-header-left">
+          <div class="week-num">02</div>
+          <div class="week-info">
+            <div class="week-title">RESPONSIVE TASARIM &amp; HAMBURGER MENÜ</div>
+            <div class="week-date">8 – 13 Nisan 2026</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div class="week-status status-done">✓ Tamamlandı</div>
+          <div class="week-chevron">▼</div>
+        </div>
+      </div>
+      <div class="week-card-body">
+        <div class="report-section">
+          <div class="section-heading">Yapılan Görevler — 13 Nisan Hedefleri</div>
+          <ul class="task-list">
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                Birden fazla <strong>.html sayfası</strong> oluşturuldu
+                <small>index.html (Ana Sayfa), about.html (Hakkımızda), projects.html (Projeler), contact.html (İletişim), rapor.html (Rapor)</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                <strong>Responsive tasarım</strong> tüm sayfalara eklendi
+                <small>Masaüstü (1200px+), Tablet (1100px), Küçük tablet (900px), Mobil (768px), Küçük mobil (480px) kırılım noktaları</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                <strong>Media query</strong> kullanımı — <span class="code-tag">@media (max-width: 900px)</span>
+                <small>Her kırılım noktası için ayrı layout düzenlemeleri yapıldı</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                <strong>Görsel taşma önleme</strong> — <span class="code-tag">max-width: 100%</span> ve <span class="code-tag">overflow-x: hidden</span>
+                <small>img, video, svg elementleri için max-width: 100%; height: auto eklendi</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                <strong>Hamburger menü</strong> — mobilde 3 çizgili menü ikonu
+                <small>900px altında nav-links gizleniyor, hamburger görünüyor. CSS animasyonlu açılış/kapanış efekti ve tam ekran mobil overlay menüsü</small>
+              </div>
+            </li>
+            <li class="task-item done">
+              <div class="task-check done">✓</div>
+              <div class="task-text">
+                <strong>Grid layout</strong> responsive dönüşümü
+                <small>Cat grid: 4 sütun → 2 sütun → 1 sütun, Products grid: 3 → 2 → 1 sütun</small>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="report-section">
+          <div class="section-heading">Responsive Kırılım Noktaları</div>
+          <div class="progress-wrap">
+            <span class="progress-label">1200px+ Masaüstü</span>
+            <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-wrap">
+            <span class="progress-label">900px Tablet</span>
+            <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-wrap">
+            <span class="progress-label">768px Mobil</span>
+            <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-wrap">
+            <span class="progress-label">480px Küçük</span>
+            <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            <span class="progress-pct">100%</span>
+          </div>
+        </div>
+        <div class="report-section">
+          <div class="section-heading">Hamburger Menü Teknik Detayı</div>
+          <div class="note-box">
+            Hamburger menü üç katmanlı yapıda tasarlandı: (1) Üç <code style="color:var(--gold2);">&lt;span&gt;</code> elementinden oluşan ikon, CSS <code style="color:var(--gold2);">transform</code> animasyonuyla açık/kapalı durumlarında ✕ ikonuna dönüşüyor. (2) <code style="color:var(--gold2);">position: fixed</code> ile tam ekran kaplayan mobil nav overlay. (3) JavaScript ile <code style="color:var(--gold2);">.open</code> class toggle'ı ve body overflow kontrolü.
+          </div>
+        </div>
+        <div class="report-section">
+          <div class="section-heading">Kullanılan Teknikler</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <span class="code-tag">@media query</span>
+            <span class="code-tag">CSS Flexbox</span>
+            <span class="code-tag">CSS Grid</span>
+            <span class="code-tag">clamp()</span>
+            <span class="code-tag">backdrop-filter</span>
+            <span class="code-tag">CSS Transform</span>
+            <span class="code-tag">JS classList.toggle</span>
+            <span class="code-tag">overflow-x: hidden</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 3 -->
+    <div class="week-card">
+      <div class="week-card-header" onclick="toggleWeek(this)">
+        <div class="week-card-header-left">
+          <div class="week-num">03</div>
+          <div class="week-info">
+            <div class="week-title">JAVASCRIPT &amp; İNTERAKTİF ÖZELLİKLER</div>
+            <div class="week-date">14 – 20 Nisan 2026</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div class="week-status status-pending">○ Planlandı</div>
+          <div class="week-chevron">▼</div>
+        </div>
+      </div>
+      <div class="week-card-body">
+        <div class="report-section">
+          <div class="section-heading">Planlanan Görevler</div>
+          <ul class="task-list">
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">
+                Sepet sistemi ve localStorage entegrasyonu
+              </div>
+            </li>
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">
+                Form validasyonu — contact.html iletişim formu
+              </div>
+            </li>
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">
+                Scroll animasyonları Intersection Observer API ile
+              </div>
+            </li>
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">
+                Ürün filtreleme sistemi geliştirme
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 4 -->
+    <div class="week-card">
+      <div class="week-card-header" onclick="toggleWeek(this)">
+        <div class="week-card-header-left">
+          <div class="week-num">04</div>
+          <div class="week-info">
+            <div class="week-title">PERFORMANS &amp; GITHUB PAGES</div>
+            <div class="week-date">21 – 27 Nisan 2026</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div class="week-status status-pending">○ Planlandı</div>
+          <div class="week-chevron">▼</div>
+        </div>
+      </div>
+      <div class="week-card-body">
+        <div class="report-section">
+          <div class="section-heading">Planlanan Görevler</div>
+          <ul class="task-list">
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">GitHub Pages'e deploy ve canlı link oluşturma</div>
+            </li>
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">Sayfa yükleme hızı optimizasyonu</div>
+            </li>
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">README.md dokümantasyonu hazırlanması</div>
+            </li>
+            <li class="task-item pending">
+              <div class="task-check pending">○</div>
+              <div class="task-text">Erişilebilirlik (a11y) iyileştirmeleri — alt text, ARIA labels</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .report-body -->
+
+  <!-- Sidebar -->
+  <aside class="report-sidebar">
+
+    <div class="sidebar-card">
+      <h3>GENEL İLERLEME</h3>
+      <div class="donut-wrap">
+        <div class="donut-circle">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle class="donut-track" cx="50" cy="50" r="45"/>
+            <circle class="donut-fill" cx="50" cy="50" r="45"/>
+          </svg>
+          <div class="donut-label">
+            <div class="donut-pct">65%</div>
+            <div class="donut-sub">Tamamlandı</div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);text-align:center;line-height:1.6;">
+          2 / 4 hafta tamamlandı<br>
+          <span style="color:var(--gold);">Hafta 2 görevleri başarıyla teslim edildi</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>PROJE BİLGİLERİ</h3>
+      <div class="info-row">
+        <span class="info-key">Ders</span>
+        <span class="info-val">Web Proje Yönetimi</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Teslim</span>
+        <span class="info-val">13 Nisan 2026</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">GitHub</span>
+        <span class="info-val"><a href="#">github.com/kullanici/vogue-line</a></span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Canlı Site</span>
+        <span class="info-val"><a href="#">kullanici.github.io/vogue-line</a></span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Toplam Dosya</span>
+        <span class="info-val">6 dosya</span>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>SAYFA LİSTESİ</h3>
+      <div class="page-links">
+        <a href="index.html" class="page-link">
+          <span class="page-link-name">index.html — Ana Sayfa</span>
+          <span class="page-link-badge badge-live">✓ Canlı</span>
+        </a>
+        <a href="about.html" class="page-link">
+          <span class="page-link-name">about.html — Hakkımızda</span>
+          <span class="page-link-badge badge-live">✓ Canlı</span>
+        </a>
+        <a href="projects.html" class="page-link">
+          <span class="page-link-name">projects.html — Projeler</span>
+          <span class="page-link-badge badge-live">✓ Canlı</span>
+        </a>
+        <a href="contact.html" class="page-link">
+          <span class="page-link-name">contact.html — İletişim</span>
+          <span class="page-link-badge badge-live">✓ Canlı</span>
+        </a>
+        <a href="rapor.html" class="page-link">
+          <span class="page-link-name">rapor.html — Rapor</span>
+          <span class="page-link-badge badge-live">✓ Canlı</span>
+        </a>
+        <div class="page-link" style="opacity:.5;">
+          <span class="page-link-name">style.css — Stiller</span>
+          <span class="page-link-badge" style="color:var(--muted);border:1px solid rgba(122,118,104,.2);">CSS</span>
+        </div>
+        <div class="page-link" style="opacity:.5;">
+          <span class="page-link-name">script.js — Kodlar</span>
+          <span class="page-link-badge" style="color:var(--muted);border:1px solid rgba(122,118,104,.2);">JS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>RESPONSIVE KONTROL</h3>
+      <div class="info-row">
+        <span class="info-key">meta viewport</span>
+        <span class="info-val" style="color:var(--green);">✓ Var</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Media Query</span>
+        <span class="info-val" style="color:var(--green);">✓ 5 kırılım</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Hamburger Menü</span>
+        <span class="info-val" style="color:var(--green);">✓ Var</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Görsel Taşma</span>
+        <span class="info-val" style="color:var(--green);">✓ Önlendi</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Mobil Test</span>
+        <span class="info-val" style="color:var(--green);">✓ Test Edildi</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Çoklu HTML Sayfa</span>
+        <span class="info-val" style="color:var(--green);">✓ 5 Sayfa</span>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">VOGUE<span>LINE</span></div>
+  <div>Web Proje Yönetimi — Haftalık Rapor · 13 Nisan 2026</div>
+  <div>© 2026 Tüm hakları saklıdır</div>
+</footer>
+
+<script>
+/* Hamburger */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+function toggleMenu() {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow = '';
+}
+if (hamburger) hamburger.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* Week accordion toggle */
+function toggleWeek(header) {
+  const card = header.closest('.week-card');
+  card.classList.toggle('open');
+}
+</script>
+</body>
+</html>
