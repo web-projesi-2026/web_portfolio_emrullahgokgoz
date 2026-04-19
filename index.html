@@ -108,6 +108,8 @@ nav.scrolled {
   height:1px; background:var(--gold);
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
+
+  
 }
 .nav-links a:hover { color:var(--gold); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -819,16 +821,309 @@ footer {
 .toast.show { transform:translateX(0); }
 .toast-title { color:var(--gold); font-weight:500; margin-bottom:.3rem; font-size:.82rem; letter-spacing:.05em; }
 
+/* ── HAMBURGER MENU BUTTON ──────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: none;
+  padding: 4px;
+  z-index: 1100;
+}
+.hamburger span {
+  display: block;
+  width: 28px;
+  height: 1.5px;
+  background: var(--gold);
+  transition: transform .4s var(--ease), opacity .3s, width .3s var(--ease);
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* ── MOBILE MENU OVERLAY ────────────────────────────────── */
+#mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s var(--ease);
+  overflow: hidden;
+}
+#mobile-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 40%, rgba(201,168,76,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 70%, rgba(212,82,110,.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+#mobile-menu.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.mobile-menu-logo {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  font-family: var(--ff-head);
+  font-size: 1.6rem;
+  letter-spacing: .2em;
+  color: var(--gold);
+}
+.mobile-menu-logo span { color: var(--text); }
+.mobile-menu-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: 1px solid rgba(201,168,76,.2);
+  color: var(--muted);
+  width: 40px;
+  height: 40px;
+  cursor: none;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .3s, color .3s;
+}
+.mobile-menu-close:hover { border-color: var(--accent); color: var(--accent); }
+
+.mobile-nav-item {
+  overflow: hidden;
+  width: 100%;
+  text-align: center;
+}
+.mobile-nav-link {
+  display: block;
+  font-family: var(--ff-head);
+  font-size: clamp(2.2rem, 8vw, 4rem);
+  letter-spacing: .08em;
+  color: var(--cream);
+  text-decoration: none;
+  padding: .4rem 2rem;
+  position: relative;
+  cursor: none;
+  transform: translateY(60px);
+  opacity: 0;
+  transition:
+    transform .6s var(--ease),
+    opacity .6s var(--ease),
+    color .3s;
+}
+.mobile-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 1px;
+  background: var(--gold);
+  transition: transform .4s var(--ease);
+}
+.mobile-nav-link:hover { color: var(--gold); }
+.mobile-nav-link:hover::after { transform: translateX(-50%) scaleX(1); }
+#mobile-menu.open .mobile-nav-link {
+  transform: translateY(0);
+  opacity: 1;
+}
+#mobile-menu.open .mobile-nav-item:nth-child(2) .mobile-nav-link { transition-delay: .1s; }
+#mobile-menu.open .mobile-nav-item:nth-child(3) .mobile-nav-link { transition-delay: .18s; }
+#mobile-menu.open .mobile-nav-item:nth-child(4) .mobile-nav-link { transition-delay: .26s; }
+#mobile-menu.open .mobile-nav-item:nth-child(5) .mobile-nav-link { transition-delay: .34s; }
+
+.mobile-menu-footer {
+  position: absolute;
+  bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s var(--ease) .4s, transform .5s var(--ease) .4s;
+}
+#mobile-menu.open .mobile-menu-footer { opacity: 1; transform: translateY(0); }
+.mobile-menu-divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(201,168,76,.3);
+}
+.mobile-menu-tagline {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  color: var(--muted);
+  font-size: .9rem;
+  letter-spacing: .1em;
+}
+
+/* ── SCROLL TO TOP BUTTON ───────────────────────────────── */
+#scroll-top {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 2rem;
+  z-index: 8000;
+  width: 48px;
+  height: 48px;
+  background: var(--bg2);
+  border: 1px solid rgba(201,168,76,.25);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity .4s var(--ease), transform .4s var(--ease), background .3s, border-color .3s;
+  overflow: hidden;
+}
+#scroll-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+#scroll-top:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+#scroll-top:hover .stt-arrow { transform: translateY(-3px); }
+.stt-arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform .3s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Progress ring around the button */
+#scroll-top svg {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+#scroll-top circle {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-linecap: butt;
+  stroke-dasharray: 184;
+  stroke-dashoffset: 184;
+  transition: stroke-dashoffset .1s linear;
+  opacity: .7;
+}
+
+/* ── STATS SECTION ──────────────────────────────────────── */
+#stats {
+  padding: 8rem 4rem;
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+#stats::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px),
+    linear-gradient(rgba(201,168,76,.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.stat-card {
+  padding: 3.5rem 2rem;
+  text-align: center;
+  position: relative;
+  background: var(--bg);
+  border: 1px solid rgba(201,168,76,.06);
+  transition: border-color .4s, background .4s;
+}
+.stat-card:hover { border-color: rgba(201,168,76,.2); background: rgba(201,168,76,.02); }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 1px;
+  background: var(--gold);
+  transition: transform .5s var(--ease);
+}
+.stat-card.counted::before { transform: translateX(-50%) scaleX(1); }
+.stat-icon {
+  font-size: 1.4rem;
+  opacity: .4;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+.stat-number {
+  font-family: var(--ff-head);
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  letter-spacing: .05em;
+  color: var(--cream);
+  line-height: 1;
+  margin-bottom: .4rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: .1em;
+}
+.stat-number .stat-val { color: var(--cream); }
+.stat-number .stat-suffix { color: var(--gold); font-size: .65em; }
+.stat-label {
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .4rem;
+}
+.stat-desc {
+  font-family: var(--ff-serif);
+  font-style: italic;
+  font-size: .85rem;
+  color: rgba(122,118,104,.6);
+  margin-top: .5rem;
+}
+
 /* ── MOBILE RESPONSIVE BASICS ──────────────────────────── */
 @media(max-width:1100px) {
   .cat-grid { grid-template-columns:repeat(2,1fr); }
   .products-grid { grid-template-columns:repeat(2,1fr); }
   .footer-grid { grid-template-columns:1fr 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media(max-width:768px) {
   nav { padding:1.2rem 1.5rem; }
   .nav-links { display:none; }
+  .hamburger { display: flex; }
   #categories,#collections,#testimonials,#newsletter,footer { padding:4rem 1.5rem; }
+  #stats { padding: 4rem 1.5rem; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .cat-grid { grid-template-columns:1fr 1fr; gap:1rem; }
   .products-grid { grid-template-columns:1fr 1fr; gap:1rem; }
   .featured-inner { grid-template-columns:1fr; }
@@ -851,18 +1146,51 @@ footer {
 
 <!-- Navigation -->
 <nav id="main-nav">
-  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+  <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
   <ul class="nav-links">
-  <li><a href="../about.html">Hakkımızda</a></li>
-  <li><a href="../projects.html">Projeler</a></li>
-  <li><a href="../contact.html">İletişim</a></li>
+   <li><a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
+  <span>Koleksiyonu Keşfet</span>
+</a>
+<li><a href="about.html">Hakkımızda</a></li>
+<li><a href="projects.html">Projeler</a></li>
+<li><a href="contact.html">İletişim</a></li>
+  </ul>
   <div class="nav-cart">
     <button class="cart-btn" onclick="openCart()">
       Sepet
       <span class="cart-badge" id="cart-badge">0</span>
     </button>
+    <button class="hamburger" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Menü">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu">
+  <div class="mobile-menu-logo">VOGUE<span>LINE</span></div>
+  <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
+  <nav>
+    <div class="mobile-nav-item">
+      <a href="index.html" class="mobile-nav-link" onclick="closeMobileMenu()">Koleksiyon</a>
+    </div>
+    <div class="mobile-nav-item">
+      <a href="about.html" class="mobile-nav-link" onclick="closeMobileMenu()">Hakkımızda</a>
+    </div>
+    <div class="mobile-nav-item">
+      <a href="projects.html" class="mobile-nav-link" onclick="closeMobileMenu()">Projeler</a>
+    </div>
+    <div class="mobile-nav-item">
+      <a href="contact.html" class="mobile-nav-link" onclick="closeMobileMenu()">İletişim</a>
+    </div>
+  </nav>
+  <div class="mobile-menu-footer">
+    <div class="mobile-menu-divider"></div>
+    <div class="mobile-menu-tagline">Zarafetin yeni tanımı — 2026</div>
+  </div>
+</div>
 
 <!-- HOME PAGE -->
 <div id="home-page" class="page active">
@@ -973,6 +1301,44 @@ footer {
     </div>
   </section>
 
+  <!-- Stats / Counter Section -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-card reveal reveal-delay-1" data-target="12400" data-suffix="+" data-label="Mutlu Müşteri">
+        <span class="stat-icon">✦</span>
+        <div class="stat-number">
+          <span class="stat-val">0</span><span class="stat-suffix">+</span>
+        </div>
+        <div class="stat-label">Mutlu Müşteri</div>
+        <div class="stat-desc">Türkiye genelinde</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2" data-target="340" data-suffix="+" data-label="Premium Ürün">
+        <span class="stat-icon">◆</span>
+        <div class="stat-number">
+          <span class="stat-val">0</span><span class="stat-suffix">+</span>
+        </div>
+        <div class="stat-label">Premium Ürün</div>
+        <div class="stat-desc">2026 koleksiyonunda</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-3" data-target="8" data-suffix="" data-label="Yıllık Deneyim">
+        <span class="stat-icon">◈</span>
+        <div class="stat-number">
+          <span class="stat-val">0</span><span class="stat-suffix"> Yıl</span>
+        </div>
+        <div class="stat-label">Yıllık Deneyim</div>
+        <div class="stat-desc">Modada güven</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-4" data-target="98" data-suffix="%" data-label="Memnuniyet">
+        <span class="stat-icon">★</span>
+        <div class="stat-number">
+          <span class="stat-val">0</span><span class="stat-suffix">%</span>
+        </div>
+        <div class="stat-label">Memnuniyet Oranı</div>
+        <div class="stat-desc">Müşteri geri bildirimleri</div>
+      </div>
+    </div>
+  </section>
+
   <!-- Testimonials -->
   <section id="testimonials">
     <div class="section-header reveal">
@@ -1040,10 +1406,10 @@ footer {
       <div class="footer-col">
         <h4>Bilgi</h4>
         <ul class="footer-links">
-          <li><a href="about.html">Hakkımızda</a></li>
-          <li><a href="about.html#sustainability">Sürdürülebilirlik</a></li>
-          <li><a href="projects.html">Projeler</a></li>
-          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="#">Hakkımızda</a></li>
+          <li><a href="#">Sürdürülebilirlik</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="#">Blog</a></li>
           <li><a href="#">Basın</a></li>
         </ul>
       </div>
@@ -1054,7 +1420,7 @@ footer {
           <li><a href="#">Kargo Bilgisi</a></li>
           <li><a href="#">Beden Rehberi</a></li>
           <li><a href="#">SSS</a></li>
-          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="#">İletişim</a></li>
         </ul>
       </div>
     </div>
@@ -1248,6 +1614,14 @@ footer {
   <div id="toast-msg"></div>
 </div>
 
+<!-- Scroll To Top -->
+<button id="scroll-top" onclick="scrollToTop()" title="Yukarı Çık" aria-label="Yukarı Çık">
+  <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <circle id="stt-ring" cx="24" cy="24" r="22.5"/>
+  </svg>
+  <span class="stt-arrow">↑</span>
+</button>
+
 <script>
 /* ── PRODUCTS DATA ──────────────────────────────── */
 const products = [
@@ -1288,10 +1662,28 @@ document.querySelectorAll('button,a').forEach(el=>{
   el.addEventListener('mouseleave',()=>cursor.classList.remove('cursor-grow'));
 });
 
-/* ── NAVBAR SCROLL ──────────────────────────────── */
+/* ── SCROLL TO TOP ──────────────────────────────── */
+const sttBtn = document.getElementById('scroll-top');
+const sttRing = document.getElementById('stt-ring');
+const ringCircumference = 184;
+
+function scrollToTop(){
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateScrollTop(){
+  const scrolled = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = maxScroll > 0 ? scrolled / maxScroll : 0;
+  const offset = ringCircumference - (progress * ringCircumference);
+  sttRing.style.strokeDashoffset = offset;
+  sttBtn.classList.toggle('visible', scrolled > 400);
+}
+
 window.addEventListener('scroll',()=>{
   document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 80);
   revealOnScroll();
+  updateScrollTop();
 });
 
 /* ── REVEAL ON SCROLL ───────────────────────────── */
@@ -1518,6 +1910,61 @@ function formatCard(inp){
   let v = inp.value.replace(/\D/g,'');
   inp.value = v.match(/.{1,4}/g)?.join(' ')||v;
 }
+
+/* ── MOBILE MENU ────────────────────────────────── */
+function toggleMobileMenu(){
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('hamburger-btn');
+  const isOpen = menu.classList.contains('open');
+  if(isOpen){ closeMobileMenu(); } else { openMobileMenu(); }
+}
+function openMobileMenu(){
+  document.getElementById('mobile-menu').classList.add('open');
+  document.getElementById('hamburger-btn').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu(){
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeMobileMenu();
+});
+
+/* ── STATS COUNTER ANIMATION ────────────────────── */
+function animateCounter(el, target, duration=2000){
+  const valEl = el.querySelector('.stat-val');
+  const start = performance.now();
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  function update(now){
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOut(progress);
+    const current = Math.round(eased * target);
+    // Format with thousand separator for large numbers
+    valEl.textContent = current >= 1000
+      ? current.toLocaleString('tr-TR')
+      : current;
+    if(progress < 1) requestAnimationFrame(update);
+    else valEl.textContent = target >= 1000
+      ? target.toLocaleString('tr-TR')
+      : target;
+  }
+  requestAnimationFrame(update);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting && !entry.target.classList.contains('counted')){
+      entry.target.classList.add('counted');
+      const target = parseInt(entry.target.dataset.target);
+      animateCounter(entry.target, target, 2200);
+    }
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll('.stat-card').forEach(card => counterObserver.observe(card));
 
 /* ── KEYBOARD ───────────────────────────────────── */
 document.addEventListener('keydown',e=>{
