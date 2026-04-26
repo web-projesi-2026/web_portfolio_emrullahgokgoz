@@ -17,6 +17,7 @@
   --text:     #e8e4d8;
   --muted:    #7a7668;
   --accent:   #d4526e;
+  --success:  #4caf82;
   --white:    #faf8f3;
   --ff-head:  'Bebas Neue', sans-serif;
   --ff-serif: 'Cormorant Garamond', serif;
@@ -160,7 +161,6 @@ nav.scrolled {
 }
 
 /* Left: Contact Info */
-.contact-info {}
 .info-tag {
   font-size: .68rem; letter-spacing: .35em; text-transform: uppercase;
   color: var(--gold); border: 1px solid rgba(201,168,76,.3);
@@ -208,7 +208,6 @@ nav.scrolled {
 .contact-card:hover .contact-icon {
   border-color: rgba(201,168,76,.5); opacity: 1;
 }
-.contact-card-text {}
 .contact-card-label {
   font-size: .65rem; letter-spacing: .25em; text-transform: uppercase;
   color: var(--gold); margin-bottom: .4rem;
@@ -237,11 +236,9 @@ nav.scrolled {
 .hours-day { color: var(--muted); }
 .hours-time { color: var(--text); }
 
-/* Right: Form */
+/* ── RIGHT: FORM ── */
 .contact-form-wrap {}
-.form-header {
-  margin-bottom: 3rem;
-}
+.form-header { margin-bottom: 3rem; }
 .form-title {
   font-family: var(--ff-head); font-size: 2.2rem; letter-spacing: .08em;
   color: var(--cream); margin-bottom: .8rem;
@@ -251,29 +248,92 @@ nav.scrolled {
   color: var(--muted); font-size: 1rem;
 }
 
-.contact-form {}
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.form-group { margin-bottom: 1.2rem; }
+
+/* ── FORM GROUP & VALIDATION ── */
+.form-group {
+  margin-bottom: 1.4rem;
+  position: relative;
+}
 .form-group label {
   display: block; font-size: .68rem; letter-spacing: .18em;
   text-transform: uppercase; color: var(--muted); margin-bottom: .6rem;
+  transition: color .3s;
 }
+.form-group label .req-star {
+  color: var(--accent); margin-left: .3rem; font-size: .7rem;
+}
+
+/* Input & Textarea */
 .form-control {
   width: 100%; padding: .9rem 1.1rem;
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(201,168,76,.15);
   color: var(--text); font-family: var(--ff-body); font-size: .9rem;
   outline: none;
-  transition: border-color .3s, background .3s;
+  transition: border-color .3s, background .3s, box-shadow .3s;
+  -webkit-appearance: none;
 }
 .form-control:focus {
-  border-color: var(--gold); background: rgba(201,168,76,.03);
+  border-color: var(--gold);
+  background: rgba(201,168,76,.03);
+  box-shadow: 0 0 0 3px rgba(201,168,76,.07);
 }
 .form-control::placeholder { color: var(--muted); }
 textarea.form-control {
   resize: vertical; min-height: 140px; line-height: 1.6;
 }
 
+/* Validation States */
+.form-control.is-valid {
+  border-color: var(--success) !important;
+  background: rgba(76,175,130,.04) !important;
+  box-shadow: 0 0 0 3px rgba(76,175,130,.07) !important;
+}
+.form-control.is-error {
+  border-color: var(--accent) !important;
+  background: rgba(212,82,110,.04) !important;
+  box-shadow: 0 0 0 3px rgba(212,82,110,.07) !important;
+  animation: shake .4s var(--ease);
+}
+@keyframes shake {
+  0%,100%{ transform: translateX(0); }
+  20%{ transform: translateX(-6px); }
+  40%{ transform: translateX(6px); }
+  60%{ transform: translateX(-4px); }
+  80%{ transform: translateX(4px); }
+}
+
+/* Field Icon Indicator */
+.form-control-wrap {
+  position: relative;
+}
+.field-icon {
+  position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+  font-size: .9rem; pointer-events: none;
+  opacity: 0; transition: opacity .3s;
+}
+textarea ~ .field-icon {
+  top: 1rem; transform: none;
+}
+.is-valid ~ .field-icon.icon-ok  { opacity: 1; }
+.is-error ~ .field-icon.icon-err { opacity: 1; }
+
+/* Error & Helper Text */
+.field-msg {
+  font-size: .72rem; letter-spacing: .06em; margin-top: .45rem;
+  min-height: 1.1em;
+  display: flex; align-items: center; gap: .4rem;
+  transition: opacity .3s, transform .3s;
+  opacity: 0; transform: translateY(-4px);
+}
+.field-msg.show {
+  opacity: 1; transform: translateY(0);
+}
+.field-msg.error { color: var(--accent); }
+.field-msg.success { color: var(--success); }
+
+/* Subject Tabs */
 .subject-tabs {
   display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.5rem;
 }
@@ -287,16 +347,48 @@ textarea.form-control {
 .subject-tab.active, .subject-tab:hover {
   background: rgba(201,168,76,.08); border-color: var(--gold); color: var(--gold);
 }
+
+/* Char Count */
 .form-label-row {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: .6rem;
 }
 .form-label-row label { margin-bottom: 0; }
-.char-count { font-size: .68rem; color: var(--muted); }
+.char-count { font-size: .68rem; color: var(--muted); transition: color .3s; }
+.char-count.warn { color: var(--accent); }
 
+/* Phone Hint */
+.phone-hint {
+  font-size: .68rem; color: var(--muted); margin-top: .4rem;
+  font-family: var(--ff-serif); font-style: italic;
+}
+
+/* KVKK Checkbox */
+.kvkk-wrap {
+  display: flex; gap: .8rem; align-items: flex-start;
+  margin: 1.8rem 0 2rem;
+  padding: 1.2rem;
+  border: 1px solid rgba(201,168,76,.1);
+  background: rgba(201,168,76,.02);
+  transition: border-color .3s;
+}
+.kvkk-wrap.is-error { border-color: rgba(212,82,110,.4); }
+.kvkk-check {
+  width: 18px; height: 18px; flex-shrink: 0; margin-top: .1rem;
+  accent-color: var(--gold); cursor: none;
+}
+.kvkk-label {
+  font-size: .8rem; color: var(--muted); line-height: 1.6;
+  font-family: var(--ff-serif); font-style: italic;
+}
+.kvkk-label a { color: var(--gold); text-decoration: none; cursor: none; }
+.kvkk-error { font-size: .72rem; color: var(--accent); margin-top: .4rem; display: none; }
+.kvkk-wrap.is-error .kvkk-error { display: block; }
+
+/* Submit Row */
 .form-submit {
   display: flex; align-items: center; justify-content: space-between;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 .submit-note {
   font-size: .78rem; color: var(--muted);
@@ -307,7 +399,7 @@ textarea.form-control {
   padding: 1rem 2.5rem; font-size: .8rem; letter-spacing: .2em;
   text-transform: uppercase; font-family: var(--ff-body); font-weight: 500;
   border: none; cursor: none; position: relative; overflow: hidden;
-  transition: box-shadow .3s;
+  transition: box-shadow .3s, opacity .3s;
 }
 .btn-send::before {
   content: ''; position: absolute; inset: 0;
@@ -317,16 +409,37 @@ textarea.form-control {
 .btn-send:hover::before { transform: scaleX(1); }
 .btn-send:hover { box-shadow: 0 0 30px rgba(201,168,76,.3); }
 .btn-send span { position: relative; z-index: 1; }
+.btn-send:disabled { opacity: .5; pointer-events: none; }
+.btn-send.loading span::after { content: ' …'; }
 
-/* Success State */
+/* Global Error Banner */
+.form-error-banner {
+  background: rgba(212,82,110,.08);
+  border: 1px solid rgba(212,82,110,.3);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  display: none;
+  font-size: .82rem; color: var(--accent);
+  line-height: 1.6;
+}
+.form-error-banner.show { display: block; animation: fadeUp .3s var(--ease); }
+.form-error-banner ul { padding-left: 1.2rem; margin-top: .4rem; }
+.form-error-banner ul li { margin-bottom: .2rem; }
+
+/* ── SUCCESS STATE ── */
 .form-success {
-  display: none; text-align: center; padding: 4rem 2rem;
+  display: none; text-align: center; padding: 5rem 2rem;
 }
 .success-icon {
-  width: 70px; height: 70px; border-radius: 50%;
-  border: 2px solid var(--gold); margin: 0 auto 2rem;
+  width: 80px; height: 80px; border-radius: 50%;
+  border: 2px solid var(--success); margin: 0 auto 2rem;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.8rem; color: var(--gold);
+  font-size: 2rem; color: var(--success);
+  animation: scaleIn .5s var(--ease-out) forwards;
+}
+@keyframes scaleIn {
+  from { transform: scale(.5); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
 }
 .success-title {
   font-family: var(--ff-head); font-size: 2.5rem; letter-spacing: .1em;
@@ -334,17 +447,34 @@ textarea.form-control {
 }
 .success-sub {
   font-family: var(--ff-serif); font-style: italic;
-  color: var(--muted); font-size: 1.1rem;
+  color: var(--muted); font-size: 1.1rem; line-height: 1.8;
+  margin-bottom: 2rem;
 }
+.success-details {
+  background: rgba(201,168,76,.05); border: 1px solid rgba(201,168,76,.15);
+  padding: 1.5rem 2rem; margin: 2rem auto; max-width: 380px;
+  text-align: left; font-size: .85rem; line-height: 1.9;
+}
+.success-details-label {
+  font-size: .65rem; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+}
+.success-details-row { display: flex; gap: .6rem; color: var(--text); }
+.success-details-key { color: var(--muted); min-width: 70px; }
+.success-back {
+  font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:.8rem 1.8rem;
+  cursor:none;transition:background .3s, border-color .3s;display:inline-block;
+  margin-top: 1rem;
+}
+.success-back:hover { background: rgba(201,168,76,.08); border-color: var(--gold); }
 
 /* ── MAP SECTION ── */
 .map-section {
   padding: 0 4rem 10rem;
   background: var(--bg2);
 }
-.map-inner {
-  max-width: 1200px; margin: 0 auto;
-}
+.map-inner { max-width: 1200px; margin: 0 auto; }
 .map-header { margin-bottom: 3rem; }
 .map-label {
   font-size: .68rem; letter-spacing: .35em; text-transform: uppercase;
@@ -360,22 +490,15 @@ textarea.form-control {
   position: relative; overflow: hidden;
 }
 .map-placeholder::before {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   background:
     linear-gradient(rgba(201,168,76,.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px);
   background-size: 40px 40px;
 }
-.map-pin {
-  position: relative; z-index: 1; text-align: center;
-}
-.map-pin-icon {
-  font-size: 3rem; margin-bottom: 1rem; opacity: .5;
-}
-.map-pin-text {
-  font-family: var(--ff-head); font-size: 1.5rem; letter-spacing: .1em; color: var(--gold);
-}
+.map-pin { position: relative; z-index: 1; text-align: center; }
+.map-pin-icon { font-size: 3rem; margin-bottom: 1rem; opacity: .5; }
+.map-pin-text { font-family: var(--ff-head); font-size: 1.5rem; letter-spacing: .1em; color: var(--gold); }
 .map-pin-sub { font-size: .82rem; color: var(--muted); margin-top: .4rem; }
 
 /* ── SOCIAL STRIP ── */
@@ -388,7 +511,6 @@ textarea.form-control {
   max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between;
 }
-.social-text {}
 .social-tag {
   font-size: .68rem; letter-spacing: .3em; text-transform: uppercase;
   color: var(--gold); margin-bottom: .8rem;
@@ -407,9 +529,7 @@ textarea.form-control {
   font-family: var(--ff-body); font-weight: 500;
   transition: all .3s;
 }
-.soc-btn:hover {
-  border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.05);
-}
+.soc-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.05); }
 
 /* ── FOOTER ── */
 footer {
@@ -479,18 +599,15 @@ footer {
 <div id="cursor-ring"></div>
 
 <nav id="main-nav">
-  <a href="../index.html" class="nav-logo">VOGUE<span>LINE</span></a>
-<a href="../about.html">Hakkımızda</a>
-<a href="projects.html">Projeler</a>  <!-- Aynı klasörde, değişmez -->
-<a href="../index.html">Koleksiyon</a>
-<a href="../index.html">Kadın</a>
-<a href="../index.html">Erkek</a>
-<a href="../index.html">Aksesuar</a>
-<a href="../about.html">Hakkımızda</a>
-<a href="../about.html#sustainability">Sürdürülebilirlik</a>
-<a href="projects.html">Projeler</a>  <!-- Aynı klasürde, değişmez -->
-<a href="contact.html">İletişim</a>  <!-- Aynı klasörde, değişmez -->
-<a href="../index.html" style="...">Koleksiyona Dön →</a>
+  <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Koleksiyon</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="projects.html">Projeler</a></li>
+    <li><a href="contact.html" class="active">İletişim</a></li>
+  </ul>
+  <div style="width:120px;"></div>
+</nav>
 
 <!-- Hero -->
 <section class="page-hero">
@@ -508,11 +625,12 @@ footer {
 <!-- Contact Main -->
 <section class="contact-section">
   <div class="contact-inner">
+
     <!-- Left: Info -->
     <div class="contact-info reveal">
       <div class="info-tag">İletişim Bilgileri</div>
       <h2 class="info-heading">
-        SIZI<br>DUYMAK<br><em>İstiyoruz</em>
+        SİZİ<br>DUYMAK<br><em>İstiyoruz</em>
       </h2>
       <p class="info-sub">
         Her mesaj bizim için değerlidir. Tüm taleplerinize en geç 24 saat içinde yanıt veriyoruz.
@@ -556,59 +674,182 @@ footer {
     <div class="contact-form-wrap reveal reveal-delay-2">
       <div class="form-header">
         <h2 class="form-title">MESAJ GÖNDER</h2>
-        <p class="form-sub">Aşağıdaki formu doldurun, size en kısa sürede dönelim</p>
+        <p class="form-sub">Tüm <span style="color:var(--accent);">*</span> ile işaretli alanlar zorunludur</p>
       </div>
 
+      <!-- CONTACT FORM -->
       <div id="contact-form">
+
+        <!-- Global error banner -->
+        <div class="form-error-banner" id="error-banner" role="alert">
+          <strong>Lütfen aşağıdaki hataları düzeltin:</strong>
+          <ul id="error-list"></ul>
+        </div>
+
+        <!-- Subject selector -->
         <div style="margin-bottom:1.5rem;">
-          <div class="hours-title" style="margin-bottom:.8rem;">Konu Seçin</div>
-          <div class="subject-tabs">
-            <button class="subject-tab active" onclick="selectSubject(this)">Genel Bilgi</button>
-            <button class="subject-tab" onclick="selectSubject(this)">Sipariş</button>
-            <button class="subject-tab" onclick="selectSubject(this)">İş Birliği</button>
-            <button class="subject-tab" onclick="selectSubject(this)">Basın</button>
-            <button class="subject-tab" onclick="selectSubject(this)">Kariyer</button>
+          <div class="hours-title" style="margin-bottom:.8rem;">Konu Seçin <span style="color:var(--accent);">*</span></div>
+          <div class="subject-tabs" id="subject-tabs">
+            <button type="button" class="subject-tab active" onclick="selectSubject(this)" data-val="genel">Genel Bilgi</button>
+            <button type="button" class="subject-tab" onclick="selectSubject(this)" data-val="siparis">Sipariş</button>
+            <button type="button" class="subject-tab" onclick="selectSubject(this)" data-val="isbirligi">İş Birliği</button>
+            <button type="button" class="subject-tab" onclick="selectSubject(this)" data-val="basin">Basın</button>
+            <button type="button" class="subject-tab" onclick="selectSubject(this)" data-val="kariyer">Kariyer</button>
           </div>
         </div>
+
+        <!-- Ad & Soyad -->
         <div class="form-row">
           <div class="form-group">
-            <label>Ad</label>
-            <input type="text" class="form-control" placeholder="Adınız" id="f-name">
+            <label for="f-name">Ad <span class="req-star">*</span></label>
+            <div class="form-control-wrap">
+              <input
+                type="text"
+                class="form-control"
+                id="f-name"
+                name="ad"
+                placeholder="Adınız"
+                required
+                minlength="2"
+                maxlength="50"
+                autocomplete="given-name"
+                oninput="liveValidate('f-name')"
+                onblur="validateField('f-name')"
+              >
+              <span class="field-icon icon-ok">✓</span>
+              <span class="field-icon icon-err">✕</span>
+            </div>
+            <div class="field-msg" id="msg-f-name"></div>
           </div>
           <div class="form-group">
-            <label>Soyad</label>
-            <input type="text" class="form-control" placeholder="Soyadınız" id="f-surname">
+            <label for="f-surname">Soyad <span class="req-star">*</span></label>
+            <div class="form-control-wrap">
+              <input
+                type="text"
+                class="form-control"
+                id="f-surname"
+                name="soyad"
+                placeholder="Soyadınız"
+                required
+                minlength="2"
+                maxlength="50"
+                autocomplete="family-name"
+                oninput="liveValidate('f-surname')"
+                onblur="validateField('f-surname')"
+              >
+              <span class="field-icon icon-ok">✓</span>
+              <span class="field-icon icon-err">✕</span>
+            </div>
+            <div class="field-msg" id="msg-f-surname"></div>
           </div>
         </div>
+
+        <!-- E-posta -->
         <div class="form-group">
-          <label>E-posta</label>
-          <input type="email" class="form-control" placeholder="ornek@mail.com" id="f-email">
+          <label for="f-email">E-posta Adresi <span class="req-star">*</span></label>
+          <div class="form-control-wrap">
+            <input
+              type="email"
+              class="form-control"
+              id="f-email"
+              name="eposta"
+              placeholder="ornek@mail.com"
+              required
+              autocomplete="email"
+              oninput="liveValidate('f-email')"
+              onblur="validateField('f-email')"
+            >
+            <span class="field-icon icon-ok">✓</span>
+            <span class="field-icon icon-err">✕</span>
+          </div>
+          <div class="field-msg" id="msg-f-email"></div>
         </div>
+
+        <!-- Telefon -->
         <div class="form-group">
-          <label>Telefon (İsteğe bağlı)</label>
-          <input type="tel" class="form-control" placeholder="+90 5XX XXX XX XX" id="f-phone">
+          <label for="f-phone">Telefon <span style="color:var(--muted);font-size:.65rem;">(İsteğe bağlı)</span></label>
+          <div class="form-control-wrap">
+            <input
+              type="tel"
+              class="form-control"
+              id="f-phone"
+              name="telefon"
+              placeholder="+90 5XX XXX XX XX"
+              autocomplete="tel"
+              oninput="liveValidate('f-phone')"
+              onblur="validateField('f-phone')"
+            >
+            <span class="field-icon icon-ok">✓</span>
+            <span class="field-icon icon-err">✕</span>
+          </div>
+          <div class="field-msg" id="msg-f-phone"></div>
+          <div class="phone-hint">Ülke kodu ile birlikte girin: +90 5XX XXX XX XX</div>
         </div>
+
+        <!-- Mesaj -->
         <div class="form-group">
           <div class="form-label-row">
-            <label>Mesajınız</label>
+            <label for="f-message">Mesajınız <span class="req-star">*</span></label>
             <span class="char-count" id="char-count">0 / 500</span>
           </div>
-          <textarea class="form-control" placeholder="Mesajınızı buraya yazın..." id="f-message" maxlength="500" oninput="updateCount()"></textarea>
+          <div class="form-control-wrap">
+            <textarea
+              class="form-control"
+              id="f-message"
+              name="mesaj"
+              placeholder="Mesajınızı buraya yazın... (en az 10 karakter)"
+              required
+              minlength="10"
+              maxlength="500"
+              oninput="updateCount(); liveValidate('f-message')"
+              onblur="validateField('f-message')"
+            ></textarea>
+            <span class="field-icon icon-ok" style="top:1rem;transform:none;">✓</span>
+            <span class="field-icon icon-err" style="top:1rem;transform:none;">✕</span>
+          </div>
+          <div class="field-msg" id="msg-f-message"></div>
         </div>
+
+        <!-- KVKK -->
+        <div class="kvkk-wrap" id="kvkk-wrap">
+          <input type="checkbox" class="kvkk-check" id="f-kvkk" onchange="validateKvkk()">
+          <div>
+            <label for="f-kvkk" class="kvkk-label" style="cursor:none;">
+              <a href="#">Kişisel Verilerin Korunması Kanunu (KVKK)</a> kapsamında kişisel verilerimin
+              işlenmesine ve iletişim kurulmasına onay veriyorum. <span style="color:var(--accent);">*</span>
+            </label>
+            <div class="kvkk-error">Bu onayı vermeden form gönderilemez.</div>
+          </div>
+        </div>
+
+        <!-- Submit -->
         <div class="form-submit">
-          <span class="submit-note">★ 48 saatten uzun sürmez</span>
-          <button class="btn-send" onclick="sendMessage()"><span>Gönder →</span></button>
+          <span class="submit-note">★ 24 saatten uzun sürmez</span>
+          <button type="button" class="btn-send" id="submit-btn" onclick="sendMessage()">
+            <span>Gönder →</span>
+          </button>
         </div>
+
+      </div><!-- /#contact-form -->
+
+      <!-- Success State -->
+      <div class="form-success" id="form-success" role="status">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">MESAJINIZ ALINDI!</h2>
+        <p class="success-sub">
+          Başarıyla iletildi.<br>
+          En geç <strong>24 saat</strong> içinde geri döneceğiz.
+        </p>
+        <div class="success-details">
+          <div class="success-details-label">Gönderim Özeti</div>
+          <div class="success-details-row"><span class="success-details-key">Ad Soyad</span><span id="s-name">—</span></div>
+          <div class="success-details-row"><span class="success-details-key">E-posta</span><span id="s-email">—</span></div>
+          <div class="success-details-row"><span class="success-details-key">Konu</span><span id="s-subject">—</span></div>
+        </div>
+        <a href="index.html" class="success-back">Koleksiyona Dön →</a>
       </div>
 
-      <div class="form-success" id="form-success">
-        <div class="success-icon">✓</div>
-        <h2 class="success-title">ALINDI!</h2>
-        <p class="success-sub">Mesajınız başarıyla iletildi.<br>En kısa sürede size geri döneceğiz.</p>
-        <br><br>
-        <a href="index.html" style="font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:.8rem 1.8rem;cursor:none;transition:background .3s;display:inline-block;">Koleksiyona Dön →</a>
-      </div>
-    </div>
+    </div><!-- /.contact-form-wrap -->
   </div>
 </section>
 
@@ -696,44 +937,224 @@ footer {
 </footer>
 
 <script>
+/* ── CURSOR ─────────────────────────────── */
 const cur = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
+let rx = 0, ry = 0;
 document.addEventListener('mousemove', e => {
   cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 80);
+  cur.style.top  = e.clientY + 'px';
 });
+(function animRing() {
+  rx += (parseFloat(cur.style.left || 0) - rx) * .12;
+  ry += (parseFloat(cur.style.top  || 0) - ry) * .12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+
+/* ── NAVBAR & REVEAL ────────────────────── */
 window.addEventListener('scroll', () => {
   document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 50);
+  revealOnScroll();
 });
 function revealOnScroll() {
   document.querySelectorAll('.reveal').forEach(el => {
-    if (el.getBoundingClientRect().top < window.innerHeight * .88) el.classList.add('visible');
+    if (el.getBoundingClientRect().top < window.innerHeight * .88)
+      el.classList.add('visible');
   });
 }
-window.addEventListener('scroll', revealOnScroll);
 revealOnScroll();
 
+/* ── SUBJECT TAB ────────────────────────── */
+let selectedSubject = 'Genel Bilgi';
 function selectSubject(btn) {
   document.querySelectorAll('.subject-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  selectedSubject = btn.textContent.trim();
 }
 
+/* ── CHAR COUNT ─────────────────────────── */
 function updateCount() {
   const msg = document.getElementById('f-message');
-  document.getElementById('char-count').textContent = msg.value.length + ' / 500';
+  const cc  = document.getElementById('char-count');
+  const len = msg.value.length;
+  cc.textContent = len + ' / 500';
+  cc.classList.toggle('warn', len > 450);
 }
 
+/* ══════════════════════════════════════════
+   VALIDATION ENGINE
+   ══════════════════════════════════════════ */
+
+/* Rules per field */
+const RULES = {
+  'f-name': {
+    required: true,
+    label: 'Ad',
+    validate(v) {
+      if (!v.trim())         return 'Ad alanı boş bırakılamaz.';
+      if (v.trim().length < 2) return 'Ad en az 2 karakter olmalıdır.';
+      if (!/^[\p{L}\s\-'.]+$/u.test(v.trim())) return 'Ad yalnızca harf içerebilir.';
+      return null;
+    },
+    hint: null
+  },
+  'f-surname': {
+    required: true,
+    label: 'Soyad',
+    validate(v) {
+      if (!v.trim())         return 'Soyad alanı boş bırakılamaz.';
+      if (v.trim().length < 2) return 'Soyad en az 2 karakter olmalıdır.';
+      if (!/^[\p{L}\s\-'.]+$/u.test(v.trim())) return 'Soyad yalnızca harf içerebilir.';
+      return null;
+    },
+    hint: null
+  },
+  'f-email': {
+    required: true,
+    label: 'E-posta',
+    validate(v) {
+      if (!v.trim()) return 'E-posta alanı boş bırakılamaz.';
+      /* RFC 5322 simplified — must have local@domain.tld */
+      const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+      if (!re.test(v.trim())) return 'Geçerli bir e-posta adresi girin. (ör: ad@domain.com)';
+      return null;
+    },
+    hint: null
+  },
+  'f-phone': {
+    required: false,
+    label: 'Telefon',
+    validate(v) {
+      if (!v.trim()) return null; /* optional */
+      /* Accept formats: +905551234567 | +90 555 123 45 67 | 05551234567 */
+      const digits = v.replace(/[\s\-().]/g, '');
+      const re = /^(\+90|0)?[5][0-9]{9}$/;
+      if (!re.test(digits)) return 'Geçerli bir Türkiye telefon numarası girin. (+90 5XX XXX XX XX)';
+      return null;
+    },
+    hint: null
+  },
+  'f-message': {
+    required: true,
+    label: 'Mesaj',
+    validate(v) {
+      if (!v.trim())          return 'Mesaj alanı boş bırakılamaz.';
+      if (v.trim().length < 10) return 'Mesajınız en az 10 karakter olmalıdır.';
+      return null;
+    },
+    hint: null
+  }
+};
+
+/* Returns error string or null */
+function getError(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  return RULES[id].validate(el.value);
+}
+
+/* Apply visual state to one field */
+function applyState(id, error, touched) {
+  const el  = document.getElementById(id);
+  const msg = document.getElementById('msg-' + id);
+  if (!el || !msg) return;
+
+  el.classList.remove('is-valid', 'is-error');
+  msg.classList.remove('show', 'error', 'success');
+  msg.textContent = '';
+
+  if (!touched) return; /* pristine — no decoration */
+
+  if (error) {
+    el.classList.add('is-error');
+    msg.textContent = '⚠ ' + error;
+    msg.classList.add('show', 'error');
+  } else {
+    el.classList.add('is-valid');
+    /* show success hint for required fields */
+    if (RULES[id].required) {
+      msg.textContent = '✓ Geçerli';
+      msg.classList.add('show', 'success');
+    }
+  }
+}
+
+/* touched set — track which fields user has interacted with */
+const touched = new Set();
+
+function liveValidate(id) {
+  touched.add(id);
+  applyState(id, getError(id), true);
+}
+
+function validateField(id) {
+  touched.add(id);
+  applyState(id, getError(id), true);
+}
+
+/* KVKK */
+function validateKvkk() {
+  const checked = document.getElementById('f-kvkk').checked;
+  document.getElementById('kvkk-wrap').classList.toggle('is-error', !checked);
+  return checked;
+}
+
+/* ── SEND ───────────────────────────────── */
 function sendMessage() {
-  const email = document.getElementById('f-email').value;
-  const name = document.getElementById('f-name').value;
-  if (!name.trim() || !email.includes('@')) {
-    document.getElementById('f-name').style.borderColor = !name.trim() ? 'var(--accent)' : '';
-    document.getElementById('f-email').style.borderColor = !email.includes('@') ? 'var(--accent)' : '';
+  /* Force-touch all fields */
+  Object.keys(RULES).forEach(id => {
+    touched.add(id);
+    applyState(id, getError(id), true);
+  });
+
+  /* Collect errors */
+  const errors = [];
+  Object.keys(RULES).forEach(id => {
+    const err = getError(id);
+    if (err) errors.push({ id, label: RULES[id].label, msg: err });
+  });
+
+  /* KVKK */
+  const kvkkOk = validateKvkk();
+  if (!kvkkOk) errors.push({ id: 'f-kvkk', label: 'KVKK Onayı', msg: 'KVKK onayı zorunludur.' });
+
+  /* Show / hide banner */
+  const banner = document.getElementById('error-banner');
+  const list   = document.getElementById('error-list');
+
+  if (errors.length > 0) {
+    list.innerHTML = errors.map(e => `<li><strong>${e.label}:</strong> ${e.msg}</li>`).join('');
+    banner.classList.add('show');
+    /* Scroll to first errored field */
+    const firstEl = document.getElementById(errors[0].id);
+    if (firstEl) firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-  document.getElementById('contact-form').style.display = 'none';
-  document.getElementById('form-success').style.display = 'block';
+
+  /* All good → submit */
+  banner.classList.remove('show');
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  /* Simulate async send (replace with fetch() in production) */
+  setTimeout(() => {
+    /* Populate summary */
+    const name = document.getElementById('f-name').value.trim()
+                 + ' ' + document.getElementById('f-surname').value.trim();
+    document.getElementById('s-name').textContent    = name;
+    document.getElementById('s-email').textContent   = document.getElementById('f-email').value.trim();
+    document.getElementById('s-subject').textContent = selectedSubject;
+
+    /* Show success */
+    document.getElementById('contact-form').style.display = 'none';
+    document.getElementById('form-success').style.display  = 'block';
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }, 900);
 }
 </script>
 </body>
