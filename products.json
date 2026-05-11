@@ -1,0 +1,104 @@
+[
+  {
+    "id": 1,
+    "name": "Jasmine Silk Bluz",
+    "category": "kadin",
+    "price": 1890,
+    "icon": "👗",
+    "badge": "yeni",
+    "desc": "İpek dokulu premium kumaştan üretilmiş, minimal kesimli bluz. Her ortama uygun zarif bir seçim.",
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["Krem", "Siyah", "Rosé"]
+  },
+  {
+    "id": 2,
+    "name": "Onyx Slim Takım",
+    "category": "erkek",
+    "price": 4250,
+    "icon": "🤵",
+    "badge": "yeni",
+    "desc": "Merino yün karışımlı kumaştan üretilen bu slim fit takım elbise, profesyonel ve şık görünümü bir arada sunar.",
+    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "colors": ["Antrasit", "Lacivert"]
+  },
+  {
+    "id": 3,
+    "name": "Luna Deri Çanta",
+    "category": "aksesuar",
+    "price": 3100,
+    "oldPrice": 3900,
+    "icon": "👜",
+    "badge": "sale",
+    "desc": "Tam tahıllı deri ve el yapımı detaylarıyla hazırlanmış. Her gün kullanıma uygun.",
+    "sizes": ["Tek Beden"],
+    "colors": ["Kahve", "Siyah", "Camel"]
+  },
+  {
+    "id": 4,
+    "name": "Ember Trençkot",
+    "category": "kadin",
+    "price": 5650,
+    "icon": "🧥",
+    "badge": "",
+    "desc": "Kashmere yün karışımlı çift katmanlı trençkot. Sonbahar ve kış için ideal.",
+    "sizes": ["XS", "S", "M", "L"],
+    "colors": ["Camel", "Siyah"]
+  },
+  {
+    "id": 5,
+    "name": "Noir Oxford Ayakkabı",
+    "category": "erkek",
+    "price": 2800,
+    "oldPrice": 3200,
+    "icon": "👞",
+    "badge": "sale",
+    "desc": "El boyamalı İtalyan deri üst ve tahta taban. Klasik şıklığın simgesi.",
+    "sizes": ["40", "41", "42", "43", "44", "45"],
+    "colors": ["Siyah", "Kahve"]
+  },
+  {
+    "id": 6,
+    "name": "Aurore Kolye",
+    "category": "aksesuar",
+    "price": 890,
+    "icon": "💎",
+    "badge": "yeni",
+    "desc": "925 ayar gümüş zincir üzerine altın kaplama yuvarlak kolye. Minimalist şıklık.",
+    "sizes": ["Tek Beden"],
+    "colors": ["Altın", "Gümüş"]
+  },
+  {
+    "id": 7,
+    "name": "Velvet Midi Etek",
+    "category": "kadin",
+    "price": 2100,
+    "icon": "👚",
+    "badge": "yeni",
+    "desc": "Kadife dokulu midi etek. Akşam davetleri ve özel günler için mükemmel bir seçim.",
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["Bordo", "Zümrüt", "Siyah"]
+  },
+  {
+    "id": 8,
+    "name": "Cashmere Polo",
+    "category": "erkek",
+    "price": 1650,
+    "oldPrice": 1950,
+    "icon": "👔",
+    "badge": "sale",
+    "desc": "Saf kashmere karışımlı polo yaka kazak. Hem casual hem de smart casual kombinlere uyar.",
+    "sizes": ["S", "M", "L", "XL"],
+    "colors": ["Krem", "Gri", "Navy"]
+  },
+  {
+    "id": 9,
+    "name": "Gold Bileklik Set",
+    "category": "aksesuar",
+    "price": 650,
+    "icon": "✨",
+    "badge": "yeni",
+    "desc": "3'lü altın kaplama bileklik seti. Katmanlı takı trendi için ideal başlangıç.",
+    "sizes": ["Tek Beden"],
+    "colors": ["Altın"]
+  }
+]
