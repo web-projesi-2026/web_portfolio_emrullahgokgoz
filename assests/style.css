@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VOGUE LINE — Koleksiyon 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
 /* ── RESET & VARIABLES ─────────────────────────────────── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
@@ -108,8 +99,6 @@ nav.scrolled {
   height:1px; background:var(--gold);
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
-
-  
 }
 .nav-links a:hover { color:var(--gold); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -645,7 +634,6 @@ footer {
   background:var(--bg);
 }
 .checkout-grid { display:grid; grid-template-columns:1fr .6fr; gap:4rem; max-width:1200px; margin:0 auto; }
-.checkout-form-section { }
 .checkout-steps {
   display:flex; gap:0; margin-bottom:3rem;
   border:1px solid rgba(201,168,76,.15); overflow:hidden;
@@ -844,518 +832,125 @@ footer {
   .hero-actions { flex-direction:column; gap:1rem; }
 }
 
-/* ── HAMBURGER MENU ─────────────────────────────────────── */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
+/* ═══════════════════════════════════════════════════════════
+   YENİ: FAVORİLER — Kart üzerindeki kalp butonu
+   ═══════════════════════════════════════════════════════════ */
+.fav-btn {
+  position: absolute;
+  top: .8rem;
+  right: .8rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,168,76,.35);
+  background: rgba(10,10,8,.75);
+  backdrop-filter: blur(6px);
+  color: var(--muted);
+  font-size: 1.1rem;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: color .25s, border-color .25s, background .25s, transform .2s;
+}
+.fav-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(212,82,110,.12);
+  transform: scale(1.12);
+}
+.fav-btn.fav-active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(212,82,110,.15);
+}
+
+/* ── FAVORİLER NAV BUTONU ─────────────────────────────── */
+.fav-nav-btn {
   background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  z-index: 1100;
-}
-.hamburger span {
-  display: block;
-  width: 26px;
-  height: 2px;
-  background: var(--gold);
-  border-radius: 2px;
-  transition: transform .35s var(--ease), opacity .25s;
-}
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-/* ── MOBILE NAV OVERLAY ─────────────────────────────────── */
-.mobile-nav {
-  position: fixed; inset: 0;
-  background: rgba(10,10,8,.97);
-  backdrop-filter: blur(20px);
-  z-index: 1050;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 2.5rem;
-  opacity: 0; pointer-events: none;
-  transform: translateY(-12px);
-  transition: opacity .4s var(--ease), transform .4s var(--ease);
-}
-.mobile-nav.open {
-  opacity: 1; pointer-events: all; transform: translateY(0);
-}
-.mobile-nav a {
-  font-family: var(--ff-head);
-  font-size: clamp(2.2rem, 8vw, 3.5rem);
-  letter-spacing: .1em; text-transform: uppercase;
-  color: var(--text); text-decoration: none;
-  transition: color .3s;
+  border: 1px solid rgba(201,168,76,.35);
+  color: var(--muted);
+  padding: .5rem 1rem;
+  font-family: var(--ff-body);
+  font-size: .75rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: none;
   position: relative;
+  transition: color .3s, border-color .3s;
 }
-.mobile-nav a:hover, .mobile-nav a.active { color: var(--gold); }
-.mobile-nav-close {
-  position: absolute; top: 1.8rem; right: 1.8rem;
-  background: none; border: 1px solid rgba(201,168,76,.3);
-  color: var(--gold); width: 40px; height: 40px;
-  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: background .3s;
-}
-.mobile-nav-close:hover { background: rgba(201,168,76,.1); }
-@media (max-width: 900px) {
-  .nav-links { display: none !important; }
-  .hamburger { display: flex; }
-}
-@media (max-width: 768px) {
-  img, video, iframe, svg { max-width: 100%; height: auto; }
-  * { box-sizing: border-box; }
-  nav { padding: 1rem 1.2rem !important; }
-  nav.scrolled { padding: .8rem 1.2rem !important; }
-}
-@media (max-width: 480px) {
-  nav { padding: .9rem 1rem !important; }
+.fav-nav-btn:hover { color: var(--accent); border-color: var(--accent); }
+.fav-badge {
+  position: absolute;
+  top: -8px; right: -8px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  font-size: .65rem;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
 }
 
-</style>
-</head>
-<body>
+/* ── FAVORİLER DRAWER ────────────────────────────────── */
+.fav-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 2000; opacity: 0; pointer-events: none;
+  transition: opacity .4s;
+}
+.fav-overlay.open { opacity: 1; pointer-events: all; }
+.fav-drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 420px;
+  background: var(--bg2); z-index: 2001;
+  transform: translateX(-100%);
+  transition: transform .4s var(--ease);
+  display: flex; flex-direction: column;
+  border-right: 1px solid rgba(201,168,76,.1);
+}
+.fav-drawer.open { transform: translateX(0); }
+@media (max-width: 768px) { .fav-drawer { width: 100%; } }
 
-<!-- Custom Cursor -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+/* ── MODAL FAVORİ BUTONU ─────────────────────────────── */
+#modal-fav-btn {
+  width: 100%;
+  margin-top: .5rem;
+  background: transparent;
+  border: 1px solid rgba(212,82,110,.35);
+  color: var(--muted);
+  padding: .85rem;
+  font-family: var(--ff-body);
+  font-size: .8rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  cursor: none;
+  transition: all .3s;
+}
+#modal-fav-btn:hover,
+#modal-fav-btn.fav-active {
+  background: rgba(212,82,110,.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
-<!-- Navigation -->
-<!-- Mobile Nav -->
-<div class="mobile-nav" id="mobile-nav">
-  <button class="mobile-nav-close" onclick="closeMenu()">✕</button>
-  <a href="index.html" onclick="closeMenu()">Koleksiyon</a>
-  <a href="about.html" onclick="closeMenu()">Hakkımızda</a>
-  <a href="projects.html" onclick="closeMenu()">Projeler</a>
-  <a href="contact.html" onclick="closeMenu()">İletişim</a>
-</div>
-<nav id="main-nav">
-  <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
-  <ul class="nav-links">
-   <li><a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
-  <span>Koleksiyonu Keşfet</span>
-</a>
-<li><a href="about.html">Hakkımızda</a></li>
-<li><a href="projects.html">Projeler</a></li>
-<li><a href="contact.html">İletişim</a></li>
-  </ul>
-  <div class="nav-cart">
-    <button class="fav-nav-btn" onclick="openFavorites()">
-      ♡ Favoriler
-      <span class="fav-badge" id="fav-badge">0</span>
-    </button>
-    <button class="cart-btn" onclick="openCart()">
-      Sepet
-      <span class="cart-badge" id="cart-badge">0</span>
-    </button>
-  </div>
-<button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
-</nav>
-
-<!-- HOME PAGE -->
-<div id="home-page" class="page active">
-
-  <!-- Hero -->
-  <section id="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-grid-lines"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">Bahar / Yaz 2026</div>
-      <h1 class="hero-title">
-        MODE<br><em>Sanatı</em>
-      </h1>
-      <p class="hero-subtitle">Zarafetin yeni tanımıyla tanışın</p>
-      <div class="hero-actions">
-        <button class="btn-primary" onclick="scrollTo('collections')">
-          <span>Koleksiyonu Keşfet</span>
-        </button>
-        <button class="btn-ghost" onclick="scrollTo('categories')">Kategoriler</button>
-      </div>
-    </div>
-    <div class="hero-scroll">
-      <span class="hero-scroll-text">Aşağı Kaydır</span>
-      <div class="scroll-line"></div>
-    </div>
-    <div class="hero-marquee">
-      <div class="marquee-track" id="marquee-track">
-        <span>YENİ SEZON <span class="marquee-dot">◆</span> BAHAR 2026 <span class="marquee-dot">◆</span> SINIRSIZ ZARAFET <span class="marquee-dot">◆</span> PREMIUM KALİTE <span class="marquee-dot">◆</span> ÖZGÜN TASARIM <span class="marquee-dot">◆</span> YENİ SEZON <span class="marquee-dot">◆</span> BAHAR 2026 <span class="marquee-dot">◆</span> SINIRSIZ ZARAFET <span class="marquee-dot">◆</span> PREMIUM KALİTE <span class="marquee-dot">◆</span> ÖZGÜN TASARIM <span class="marquee-dot">◆</span></span>
-        <span aria-hidden="true">YENİ SEZON <span class="marquee-dot">◆</span> BAHAR 2026 <span class="marquee-dot">◆</span> SINIRSIZ ZARAFET <span class="marquee-dot">◆</span> PREMIUM KALİTE <span class="marquee-dot">◆</span> ÖZGÜN TASARIM <span class="marquee-dot">◆</span> YENİ SEZON <span class="marquee-dot">◆</span> BAHAR 2026 <span class="marquee-dot">◆</span> SINIRSIZ ZARAFET <span class="marquee-dot">◆</span> PREMIUM KALİTE <span class="marquee-dot">◆</span> ÖZGÜN TASARIM <span class="marquee-dot">◆</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Categories -->
-  <section id="categories">
-    <div class="section-header reveal">
-      <div class="section-tag">Kategoriler</div>
-      <h2 class="section-title">Her Stile<br><em>Özel Koleksiyon</em></h2>
-      <p class="section-desc">Yüzlerce parçayla stilinizi ifade edin</p>
-    </div>
-    <div class="cat-grid">
-      <div class="cat-card reveal reveal-delay-1" onclick="filterProducts('kadin')">
-        <div class="cat-card-img cat-img-1" style="display:flex;align-items:center;justify-content:center;font-size:8rem;opacity:.15;">👗</div>
-        <div class="cat-card-overlay">
-          <div class="cat-card-accent"></div>
-          <div class="cat-card-label">Kadın</div>
-          <div class="cat-card-count">142 Ürün</div>
-        </div>
-      </div>
-      <div class="cat-card reveal reveal-delay-2" onclick="filterProducts('erkek')">
-        <div class="cat-card-img cat-img-2" style="display:flex;align-items:center;justify-content:center;font-size:8rem;opacity:.15;">🧥</div>
-        <div class="cat-card-overlay">
-          <div class="cat-card-accent"></div>
-          <div class="cat-card-label">Erkek</div>
-          <div class="cat-card-count">98 Ürün</div>
-        </div>
-      </div>
-      <div class="cat-card reveal reveal-delay-3" onclick="filterProducts('aksesuar')">
-        <div class="cat-card-img cat-img-3" style="display:flex;align-items:center;justify-content:center;font-size:8rem;opacity:.15;">👜</div>
-        <div class="cat-card-overlay">
-          <div class="cat-card-accent"></div>
-          <div class="cat-card-label">Aksesuar</div>
-          <div class="cat-card-count">64 Ürün</div>
-        </div>
-      </div>
-      <div class="cat-card reveal reveal-delay-4" onclick="filterProducts('yeni')">
-        <div class="cat-card-img cat-img-4" style="display:flex;align-items:center;justify-content:center;font-size:8rem;opacity:.15;">✨</div>
-        <div class="cat-card-overlay">
-          <div class="cat-card-accent"></div>
-          <div class="cat-card-label">Yeni Gelenler</div>
-          <div class="cat-card-count">37 Ürün</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Collections -->
-  <section id="collections">
-    <div class="section-header reveal">
-      <div class="section-tag">2026 Koleksiyonu</div>
-      <h2 class="section-title">Öne Çıkan<br><em>Parçalar</em></h2>
-    </div>
-    <div class="products-filters reveal">
-      <button class="filter-btn active" onclick="filterProducts('tumu', this)">Tümü</button>
-      <button class="filter-btn" onclick="filterProducts('yeni', this)">Yeni Gelenler</button>
-      <button class="filter-btn" onclick="filterProducts('kadin', this)">Kadın</button>
-      <button class="filter-btn" onclick="filterProducts('erkek', this)">Erkek</button>
-      <button class="filter-btn" onclick="filterProducts('aksesuar', this)">Aksesuar</button>
-      <button class="filter-btn" onclick="filterProducts('indirim', this)">İndirim</button>
-    </div>
-    <div class="products-grid" id="products-grid">
-      <!-- Products injected by JS -->
-    </div>
-  </section>
-
-  <!-- Featured Banner -->
-  <section id="featured">
-    <div class="featured-inner">
-      <div class="featured-visual">
-        <div class="featured-icon">✦</div>
-      </div>
-      <div class="featured-text">
-        <div class="section-tag">Özel Koleksiyon</div>
-        <h2 class="featured-title">LIMITLESS<br>EDITION</h2>
-        <p class="featured-desc">El işçiliği ve modern tasarımın buluştuğu özel sınırlı sayıda koleksiyonumuz. Her parça benzersiz, her detay özenle işlenmiş.</p>
-        <button class="btn-dark" onclick="scrollTo('collections')">Keşfet →</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section id="testimonials">
-    <div class="section-header reveal">
-      <div class="section-tag">Müşteri Yorumları</div>
-      <h2 class="section-title">Onlar Ne<br><em>Düşünüyor?</em></h2>
-    </div>
-    <div class="testimonials-slider reveal">
-      <div class="testimonial-slide active">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">Aldığım elbise beklentimin çok üzerindeydi. Kumaş kalitesi, kesim hassasiyeti ve zamanında teslimat — VogueLine gerçekten fark yaratıyor.</p>
-        <div class="testimonial-author">Zeynep K. — İstanbul</div>
-      </div>
-      <div class="testimonial-slide">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">Erkek koleksiyonu harika. Klasik çizgiler modern detaylarla birleşince ortaya muhteşem bir ürün çıkıyor. Kesinlikle tekrar alışveriş yapacağım.</p>
-        <div class="testimonial-author">Ahmet M. — Ankara</div>
-      </div>
-      <div class="testimonial-slide">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">Çanta koleksiyonu inanılmaz. Hem şık hem fonksiyonel. Müşteri hizmetleri de son derece ilgili ve hızlı. Tavsiye ederim.</p>
-        <div class="testimonial-author">Selin A. — İzmir</div>
-      </div>
-      <div class="slider-dots" id="slider-dots"></div>
-      <div class="slider-arrows">
-        <button class="slider-arrow" onclick="prevSlide()">←</button>
-        <button class="slider-arrow" onclick="nextSlide()">→</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Newsletter -->
-  <section id="newsletter">
-    <h2 class="newsletter-title reveal">ÖZEL TEKLİFLER<br>İÇİN KAYDOL</h2>
-    <p class="newsletter-sub reveal">Yeni koleksiyonlar ve indirimlerden ilk siz haberdar olun</p>
-    <div class="newsletter-form reveal">
-      <input type="email" class="newsletter-input" id="nl-email" placeholder="E-posta adresiniz">
-      <button class="newsletter-submit" onclick="subscribeNewsletter()">Abone Ol</button>
-    </div>
-    <p class="newsletter-success" id="nl-success">Harika! Sizi listemize ekledik ✦</p>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
-        <p class="footer-desc">Moda dünyasının en seçkin parçalarını sizlerle buluşturuyoruz. Kalite, zarafet ve özgünlük — VogueLine'ın üç temel değeri.</p>
-        <div class="footer-socials">
-          <a href="#" class="social-link">f</a>
-          <a href="#" class="social-link">in</a>
-          <a href="#" class="social-link">ig</a>
-          <a href="#" class="social-link">tw</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Mağaza</h4>
-        <ul class="footer-links">
-          <li><a href="#" onclick="filterProducts('kadin')">Kadın</a></li>
-          <li><a href="#" onclick="filterProducts('erkek')">Erkek</a></li>
-          <li><a href="#" onclick="filterProducts('aksesuar')">Aksesuar</a></li>
-          <li><a href="#" onclick="filterProducts('yeni')">Yeni Gelenler</a></li>
-          <li><a href="#" onclick="filterProducts('indirim')">İndirimler</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Bilgi</h4>
-        <ul class="footer-links">
-          <li><a href="#">Hakkımızda</a></li>
-          <li><a href="#">Sürdürülebilirlik</a></li>
-          <li><a href="#">Kariyer</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Basın</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Destek</h4>
-        <ul class="footer-links">
-          <li><a href="#">İade & Değişim</a></li>
-          <li><a href="#">Kargo Bilgisi</a></li>
-          <li><a href="#">Beden Rehberi</a></li>
-          <li><a href="#">SSS</a></li>
-          <li><a href="#">İletişim</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 VogueLine. Tüm hakları saklıdır.</span>
-      <span>Gizlilik Politikası · Kullanım Şartları</span>
-    </div>
-  </footer>
-</div>
-
-<!-- CHECKOUT PAGE -->
-<div id="checkout-page" class="page">
-  <div class="checkout-grid">
-    <div class="checkout-form-section">
-      <div class="checkout-steps">
-        <div class="step-item active" id="step-1">1. Bilgiler</div>
-        <div class="step-item" id="step-2">2. Teslimat</div>
-        <div class="step-item" id="step-3">3. Ödeme</div>
-      </div>
-
-      <!-- Panel 1: Personal Info -->
-      <div class="form-panel active" id="panel-1">
-        <h2 class="form-title">KİŞİSEL BİLGİLER</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Ad</label>
-            <input type="text" class="form-control" placeholder="Adınız">
-          </div>
-          <div class="form-group">
-            <label>Soyad</label>
-            <input type="text" class="form-control" placeholder="Soyadınız">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>E-posta</label>
-          <input type="email" class="form-control" placeholder="ornek@mail.com">
-        </div>
-        <div class="form-group">
-          <label>Telefon</label>
-          <input type="tel" class="form-control" placeholder="+90 5XX XXX XX XX">
-        </div>
-        <div class="form-nav">
-          <button class="btn-ghost" onclick="showPage('home')">← Alışverişe Dön</button>
-          <button class="btn-primary" onclick="nextStep()"><span>Devam Et →</span></button>
-        </div>
-      </div>
-
-      <!-- Panel 2: Delivery -->
-      <div class="form-panel" id="panel-2">
-        <h2 class="form-title">TESLİMAT ADRESİ</h2>
-        <div class="form-group">
-          <label>Adres Başlığı</label>
-          <input type="text" class="form-control" placeholder="Ev / İş">
-        </div>
-        <div class="form-group">
-          <label>Açık Adres</label>
-          <input type="text" class="form-control" placeholder="Sokak, Cadde, Bina No">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>İlçe</label>
-            <input type="text" class="form-control" placeholder="İlçe">
-          </div>
-          <div class="form-group">
-            <label>Şehir</label>
-            <input type="text" class="form-control" placeholder="Şehir">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Posta Kodu</label>
-            <input type="text" class="form-control" placeholder="00000">
-          </div>
-          <div class="form-group">
-            <label>Ülke</label>
-            <input type="text" class="form-control" value="Türkiye">
-          </div>
-        </div>
-        <div class="form-nav">
-          <button class="btn-ghost" onclick="prevStep()">← Geri</button>
-          <button class="btn-primary" onclick="nextStep()"><span>Devam Et →</span></button>
-        </div>
-      </div>
-
-      <!-- Panel 3: Payment -->
-      <div class="form-panel" id="panel-3">
-        <h2 class="form-title">ÖDEME BİLGİLERİ</h2>
-        <div class="form-group">
-          <label>Kart Üzerindeki İsim</label>
-          <input type="text" class="form-control" placeholder="Ad Soyad">
-        </div>
-        <div class="form-group">
-          <label>Kart Numarası</label>
-          <input type="text" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCard(this)">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Son Kullanma Tarihi</label>
-            <input type="text" class="form-control" placeholder="AA/YY" maxlength="5">
-          </div>
-          <div class="form-group">
-            <label>CVV</label>
-            <input type="text" class="form-control" placeholder="000" maxlength="3">
-          </div>
-        </div>
-        <div class="payment-icons">
-          <div class="pay-icon">VISA</div>
-          <div class="pay-icon">MC</div>
-          <div class="pay-icon">AMEX</div>
-          <div class="pay-icon">TR Pay</div>
-        </div>
-        <div class="form-nav" style="margin-top:2rem;">
-          <button class="btn-ghost" onclick="prevStep()">← Geri</button>
-          <button class="btn-primary" onclick="placeOrder()"><span>Siparişi Tamamla ✦</span></button>
-        </div>
-      </div>
-
-      <!-- Order Success -->
-      <div class="form-panel" id="panel-success">
-        <div class="order-success">
-          <div class="success-icon">✓</div>
-          <h2 class="success-title">SİPARİŞ ALINDI!</h2>
-          <p class="success-sub">Teşekkürler! Siparişiniz başarıyla alındı.<br>Kargo takip bilgisi e-posta ile gönderilecek.</p>
-          <br><br>
-          <a href="index.html" class="btn-primary" style="margin:0 auto;display:block;text-decoration:none;"><span>Alışverişe Devam Et</span></a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Summary Sidebar -->
-    <div class="checkout-summary">
-      <div class="summary-title">Sipariş Özeti</div>
-      <div class="summary-items" id="summary-items"></div>
-      <div class="summary-total">
-        <span>Toplam</span>
-        <span class="summary-total-val" id="summary-total">₺0</span>
-      </div>
-      <div style="margin-top:.8rem;display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);">
-        <span>Kargo</span><span style="color:var(--gold)">Ücretsiz</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Cart Overlay -->
-<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
-<div class="cart-drawer" id="cart-drawer">
-  <div class="cart-header">
-    <h2>SEPETİM</h2>
-    <button class="cart-close" onclick="closeCart()">✕</button>
-  </div>
-  <div class="cart-items" id="cart-items-container">
-    <div class="cart-empty">Sepetiniz boş<br><br><em>Koleksiyonu keşfetmeye başlayın</em></div>
-  </div>
-  <div class="cart-footer">
-    <div class="cart-total">
-      <span>Toplam</span>
-      <span class="cart-total-price" id="cart-total">₺0</span>
-    </div>
-    <button class="checkout-btn" onclick="goToCheckout()">Ödemeye Geç →</button>
-  </div>
-</div>
-
-<!-- Product Modal -->
-<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
-  <div class="modal-content">
-    <button class="modal-close-btn" onclick="closeModalDirect()">✕</button>
-    <div class="modal-img" id="modal-img"></div>
-    <div class="modal-info">
-      <div class="modal-tag" id="modal-tag"></div>
-      <div class="modal-name" id="modal-name"></div>
-      <div class="modal-price" id="modal-price"></div>
-      <div class="modal-desc" id="modal-desc"></div>
-      <div class="modal-sizes-label">Beden Seç</div>
-      <div class="modal-sizes">
-        <button class="size-btn active" onclick="selectSize(this)">XS</button>
-        <button class="size-btn" onclick="selectSize(this)">S</button>
-        <button class="size-btn" onclick="selectSize(this)">M</button>
-        <button class="size-btn" onclick="selectSize(this)">L</button>
-        <button class="size-btn" onclick="selectSize(this)">XL</button>
-      </div>
-      <button class="btn-primary modal-add" onclick="addFromModal()"><span>Sepete Ekle</span></button>
-      <button id="modal-fav-btn" class="btn-ghost" style="width:100%;">Favorilere Ekle ♡</button>
-    </div>
-  </div>
-</div>
-
-<!-- Favorites Overlay -->
-<div class="fav-overlay" id="fav-overlay" onclick="closeFavorites()"></div>
-<div class="fav-drawer" id="fav-drawer">
-  <div class="cart-header">
-    <h2>FAVORİLERİM</h2>
-    <button class="cart-close" onclick="closeFavorites()">✕</button>
-  </div>
-  <div class="cart-items" id="fav-items-container">
-    <div class="cart-empty">Henüz favori eklemediniz<br><br><em>♡ ile ürünleri favorileyin</em></div>
-  </div>
-</div>
-
-<!-- localStorage Durum Göstergesi -->
-<div id="storage-indicator">
-  <span>💾 Kaydedildi:</span> Sepet &amp; Favoriler
-</div>
-
-
-<!-- Toast -->
-<div class="toast" id="toast">
-  <div class="toast-title" id="toast-title">Ürün Eklendi</div>
-  <div id="toast-msg"></div>
-</div>
-
-<script src="assets/script.js"></script>
-</body>
-</html>
+/* ── localStorage DURUM GÖSTERGESI (sağ alt köşe) ────── */
+#storage-indicator {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 2rem;
+  z-index: 8000;
+  background: rgba(10,10,8,.9);
+  border: 1px solid rgba(201,168,76,.2);
+  border-left: 3px solid var(--gold);
+  padding: .5rem 1rem;
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .08em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .4s;
+  backdrop-filter: blur(8px);
+}
+#storage-indicator.show { opacity: 1; }
+#storage-indicator span { color: var(--gold); font-weight: 500; }
