@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VOGUE LINE — Koleksiyon 2026</title>
+<title>VogueLine — Premium Moda & Koleksiyon 2026</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a08'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' fill='%23c9a84c' text-anchor='middle'%3EVL%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -108,6 +109,8 @@ nav.scrolled {
   height:1px; background:var(--gold);
   transform: scaleX(0); transform-origin: right;
   transition: transform .35s var(--ease);
+
+  
 }
 .nav-links a:hover { color:var(--gold); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
@@ -841,6 +844,182 @@ footer {
   .form-row { grid-template-columns:1fr; }
   .hero-actions { flex-direction:column; gap:1rem; }
 }
+
+/* ── HAMBURGER MENU ─────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1100;
+}
+.hamburger span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform .35s var(--ease), opacity .25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE NAV OVERLAY ─────────────────────────────────── */
+.mobile-nav {
+  position: fixed; inset: 0;
+  background: rgba(10,10,8,.97);
+  backdrop-filter: blur(20px);
+  z-index: 1050;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2.5rem;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-12px);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.mobile-nav.open {
+  opacity: 1; pointer-events: all; transform: translateY(0);
+}
+.mobile-nav a {
+  font-family: var(--ff-head);
+  font-size: clamp(2.2rem, 8vw, 3.5rem);
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+  transition: color .3s;
+  position: relative;
+}
+.mobile-nav a:hover, .mobile-nav a.active { color: var(--gold); }
+.mobile-nav-close {
+  position: absolute; top: 1.8rem; right: 1.8rem;
+  background: none; border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold); width: 40px; height: 40px;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .3s;
+}
+.mobile-nav-close:hover { background: rgba(201,168,76,.1); }
+@media (max-width: 900px) {
+  .nav-links { display: none !important; }
+  .hamburger { display: flex; }
+}
+@media (max-width: 768px) {
+  img, video, iframe, svg { max-width: 100%; height: auto; }
+  * { box-sizing: border-box; }
+  nav { padding: 1rem 1.2rem !important; }
+  nav.scrolled { padding: .8rem 1.2rem !important; }
+}
+@media (max-width: 480px) {
+  nav { padding: .9rem 1rem !important; }
+}
+
+
+/* ── ARAMA & SIRALAMA ──────────────────────────────────────── */
+.search-sort-bar {
+  display: flex; gap: 1rem; align-items: center;
+  max-width: 700px; margin: 0 auto 3rem; flex-wrap: wrap; justify-content: center;
+}
+.search-wrap {
+  flex: 1; min-width: 220px; position: relative;
+}
+.search-wrap::before {
+  content: '⌕'; position: absolute; left: 1rem; top: 50%;
+  transform: translateY(-50%); color: var(--muted); font-size: 1.1rem;
+  pointer-events: none;
+}
+#search-input {
+  width: 100%; padding: .75rem 1rem .75rem 2.5rem;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(201,168,76,.2);
+  color: var(--text); font-family: var(--ff-body); font-size: .88rem; outline: none;
+  transition: border-color .3s;
+}
+#search-input::placeholder { color: var(--muted); }
+#search-input:focus { border-color: var(--gold); }
+#sort-select {
+  padding: .75rem 1.2rem; background: rgba(255,255,255,.04);
+  border: 1px solid rgba(201,168,76,.2); color: var(--text);
+  font-family: var(--ff-body); font-size: .82rem; outline: none;
+  cursor: pointer; transition: border-color .3s; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9a84c'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .8rem center;
+  padding-right: 2rem;
+}
+#sort-select:focus { border-color: var(--gold); }
+#sort-select option { background: var(--bg2); }
+
+/* ── AUTH MODAL ─────────────────────────────────────────────── */
+.auth-nav-btn {
+  background: none; border: 1px solid rgba(201,168,76,.4); color: var(--gold);
+  padding: .45rem 1.1rem; font-family: var(--ff-body); font-size: .75rem;
+  letter-spacing: .1em; text-transform: uppercase; cursor: none;
+  transition: background .3s, border-color .3s;
+}
+.auth-nav-btn:hover { background: var(--gold); color: var(--bg); }
+.auth-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.85);
+  z-index: 4000; opacity: 0; pointer-events: none;
+  transition: opacity .35s; display: flex; align-items: center; justify-content: center;
+}
+.auth-modal-overlay.open { opacity: 1; pointer-events: all; }
+.auth-modal {
+  background: var(--bg2); width: 100%; max-width: 440px;
+  border: 1px solid rgba(201,168,76,.15);
+  transform: scale(.94); transition: transform .35s var(--ease);
+  position: relative;
+}
+.auth-modal-overlay.open .auth-modal { transform: scale(1); }
+.auth-modal-header {
+  display: flex; border-bottom: 1px solid rgba(201,168,76,.1);
+}
+.auth-tab-btn {
+  flex: 1; padding: 1.1rem; background: none; border: none;
+  color: var(--muted); font-family: var(--ff-body); font-size: .78rem;
+  letter-spacing: .2em; text-transform: uppercase; cursor: none;
+  transition: color .3s, background .3s; border-bottom: 2px solid transparent;
+}
+.auth-tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(201,168,76,.04); }
+.auth-tab-btn:hover:not(.active) { color: var(--text); }
+.auth-modal-close {
+  position: absolute; top: .9rem; right: .9rem;
+  background: none; border: 1px solid rgba(201,168,76,.2); color: var(--muted);
+  width: 32px; height: 32px; cursor: none; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; transition: all .3s;
+}
+.auth-modal-close:hover { border-color: var(--accent); color: var(--accent); }
+.auth-panel { display: none; padding: 2rem; }
+.auth-panel.active { display: block; animation: fadeIn .3s ease; }
+.auth-panel .form-group { margin-bottom: 1rem; }
+.auth-panel .form-group label {
+  display: block; font-size: .68rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: .45rem;
+}
+.auth-panel .form-control {
+  width: 100%; padding: .8rem 1rem;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(201,168,76,.15);
+  color: var(--text); font-family: var(--ff-body); font-size: .88rem; outline: none;
+  transition: border-color .3s;
+}
+.auth-panel .form-control:focus { border-color: var(--gold); }
+.auth-panel .form-control::placeholder { color: var(--muted); }
+.auth-submit {
+  width: 100%; padding: .95rem; background: var(--gold); color: var(--bg);
+  border: none; font-family: var(--ff-body); font-size: .8rem;
+  letter-spacing: .18em; text-transform: uppercase; cursor: none;
+  font-weight: 500; margin-top: .5rem; transition: background .3s;
+}
+.auth-submit:hover { background: var(--gold2); }
+.auth-error {
+  display: none; color: var(--accent); font-size: .8rem;
+  margin-top: .6rem; padding: .5rem .8rem;
+  background: rgba(212,82,110,.08); border-left: 2px solid var(--accent);
+}
+.auth-divider {
+  text-align: center; font-size: .72rem; color: var(--muted);
+  margin: 1rem 0; letter-spacing: .1em;
+}
+
 </style>
 </head>
 <body>
@@ -850,18 +1029,36 @@ footer {
 <div id="cursor-ring"></div>
 
 <!-- Navigation -->
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" onclick="closeMenu()">✕</button>
+  <a href="index.html" onclick="closeMenu()">Koleksiyon</a>
+  <a href="about.html" onclick="closeMenu()">Hakkımızda</a>
+  <a href="projects.html" onclick="closeMenu()">Projeler</a>
+  <a href="contact.html" onclick="closeMenu()">İletişim</a>
+</div>
 <nav id="main-nav">
   <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
   <ul class="nav-links">
-  <li><a href="../about.html">Hakkımızda</a></li>
-  <li><a href="../projects.html">Projeler</a></li>
-  <li><a href="../contact.html">İletişim</a></li>
+   <li><a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
+  <span>Koleksiyonu Keşfet</span>
+</a>
+<li><a href="about.html">Hakkımızda</a></li>
+<li><a href="projects.html">Projeler</a></li>
+<li><a href="contact.html">İletişim</a></li>
+  </ul>
   <div class="nav-cart">
+    <button class="auth-nav-btn" id="auth-nav-btn" onclick="openAuthModal('login')">Giriş Yap</button>
+    <button class="fav-nav-btn" onclick="openFavorites()">
+      ♡ Favoriler
+      <span class="fav-badge" id="fav-badge">0</span>
+    </button>
     <button class="cart-btn" onclick="openCart()">
       Sepet
       <span class="cart-badge" id="cart-badge">0</span>
     </button>
   </div>
+<button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- HOME PAGE -->
@@ -953,6 +1150,19 @@ footer {
       <button class="filter-btn" onclick="filterProducts('aksesuar', this)">Aksesuar</button>
       <button class="filter-btn" onclick="filterProducts('indirim', this)">İndirim</button>
     </div>
+    <div class="search-sort-bar reveal">
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="Ürün ara..."
+          oninput="handleSearch(this.value)" autocomplete="off">
+      </div>
+      <select id="sort-select" onchange="handleSort(this.value)">
+        <option value="default">Sırala: Varsayılan</option>
+        <option value="name-asc">İsim: A → Z</option>
+        <option value="name-desc">İsim: Z → A</option>
+        <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
+        <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
+      </select>
+    </div>
     <div class="products-grid" id="products-grid">
       <!-- Products injected by JS -->
     </div>
@@ -1018,7 +1228,7 @@ footer {
   <footer>
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="#" class="nav-logo" onclick="showPage('home')">VOGUE<span>LINE</span></a>
+        <a href="index.html" class="nav-logo">VOGUE<span>LINE</span></a>
         <p class="footer-desc">Moda dünyasının en seçkin parçalarını sizlerle buluşturuyoruz. Kalite, zarafet ve özgünlük — VogueLine'ın üç temel değeri.</p>
         <div class="footer-socials">
           <a href="#" class="social-link">f</a>
@@ -1040,21 +1250,21 @@ footer {
       <div class="footer-col">
         <h4>Bilgi</h4>
         <ul class="footer-links">
-          <li><a href="about.html">Hakkımızda</a></li>
-          <li><a href="about.html#sustainability">Sürdürülebilirlik</a></li>
-          <li><a href="projects.html">Projeler</a></li>
-          <li><a href="contact.html">İletişim</a></li>
-          <li><a href="#">Basın</a></li>
+          <li><a href="pages/about.html">Hakkımızda</a></li>
+          <li><a href="pages/about.html#surdurulebilirlik">Sürdürülebilirlik</a></li>
+          <li><a href="pages/about.html#kariyer">Kariyer</a></li>
+          <li><a href="pages/projects.html">Blog</a></li>
+          <li><a href="pages/contact.html">Basın</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Destek</h4>
         <ul class="footer-links">
           <li><a href="#">İade & Değişim</a></li>
-          <li><a href="#">Kargo Bilgisi</a></li>
-          <li><a href="#">Beden Rehberi</a></li>
-          <li><a href="#">SSS</a></li>
-          <li><a href="contact.html">İletişim</a></li>
+          <li><a href="pages/contact.html#kargo">Kargo Bilgisi</a></li>
+          <li><a href="pages/contact.html#beden">Beden Rehberi</a></li>
+          <li><a href="pages/contact.html#sss">SSS</a></li>
+          <li><a href="pages/contact.html">İletişim</a></li>
         </ul>
       </div>
     </div>
@@ -1237,7 +1447,75 @@ footer {
         <button class="size-btn" onclick="selectSize(this)">XL</button>
       </div>
       <button class="btn-primary modal-add" onclick="addFromModal()"><span>Sepete Ekle</span></button>
-      <button class="btn-ghost" style="width:100%;">İstek Listesine Ekle ♡</button>
+      <button id="modal-fav-btn" class="btn-ghost" style="width:100%;">Favorilere Ekle ♡</button>
+    </div>
+  </div>
+</div>
+
+<!-- Favorites Overlay -->
+<div class="fav-overlay" id="fav-overlay" onclick="closeFavorites()"></div>
+<div class="fav-drawer" id="fav-drawer">
+  <div class="cart-header">
+    <h2>FAVORİLERİM</h2>
+    <button class="cart-close" onclick="closeFavorites()">✕</button>
+  </div>
+  <div class="cart-items" id="fav-items-container">
+    <div class="cart-empty">Henüz favori eklemediniz<br><br><em>♡ ile ürünleri favorileyin</em></div>
+  </div>
+</div>
+
+<!-- localStorage Durum Göstergesi -->
+<div id="storage-indicator">
+  <span>💾 Kaydedildi:</span> Sepet &amp; Favoriler
+</div>
+
+
+
+<!-- Auth Modal -->
+<div class="auth-modal-overlay" id="auth-modal" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-modal">
+    <button class="auth-modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-modal-header">
+      <button class="auth-tab-btn active" data-tab="login" onclick="switchAuthTab('login')">Giriş Yap</button>
+      <button class="auth-tab-btn" data-tab="register" onclick="switchAuthTab('register')">Kayıt Ol</button>
+    </div>
+    <!-- Login Panel -->
+    <div class="auth-panel active" id="auth-login">
+      <div class="form-group">
+        <label>E-posta</label>
+        <input type="email" id="login-email" class="form-control" placeholder="ornek@mail.com">
+      </div>
+      <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="login-pass" class="form-control" placeholder="••••••"
+          onkeydown="if(event.key==='Enter')loginUser()">
+      </div>
+      <div class="auth-error" id="login-error"></div>
+      <button class="auth-submit" onclick="loginUser()">Giriş Yap →</button>
+      <p class="auth-divider">Hesabınız yok mu? <a href="#" onclick="switchAuthTab('register');return false;" style="color:var(--gold);">Kayıt olun</a></p>
+    </div>
+    <!-- Register Panel -->
+    <div class="auth-panel" id="auth-register">
+      <div class="form-group">
+        <label>Ad Soyad</label>
+        <input type="text" id="reg-name" class="form-control" placeholder="Adınız Soyadınız">
+      </div>
+      <div class="form-group">
+        <label>E-posta</label>
+        <input type="email" id="reg-email" class="form-control" placeholder="ornek@mail.com">
+      </div>
+      <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="reg-pass" class="form-control" placeholder="En az 6 karakter">
+      </div>
+      <div class="form-group">
+        <label>Şifre Tekrar</label>
+        <input type="password" id="reg-pass2" class="form-control" placeholder="Şifreyi tekrar girin"
+          onkeydown="if(event.key==='Enter')registerUser()">
+      </div>
+      <div class="auth-error" id="reg-error"></div>
+      <button class="auth-submit" onclick="registerUser()">Kayıt Ol →</button>
+      <p class="auth-divider">Zaten hesabınız var mı? <a href="#" onclick="switchAuthTab('login');return false;" style="color:var(--gold);">Giriş yapın</a></p>
     </div>
   </div>
 </div>
@@ -1248,281 +1526,6 @@ footer {
   <div id="toast-msg"></div>
 </div>
 
-<script>
-/* ── PRODUCTS DATA ──────────────────────────────── */
-const products = [
-  { id:1, name:'Jasmine Silk Bluz', category:'kadin', price:1890, icon:'👗', badge:'yeni', desc:'İpek dokulu premium kumaştan üretilmiş, minimal kesimli bluz. Her ortama uygun zarif bir seçim.' },
-  { id:2, name:'Onyx Slim Takım', category:'erkek', price:4250, icon:'🤵', badge:'yeni', desc:'Merino yün karışımlı kumaştan üretilen bu slim fit takım elbise, profesyonel ve şık görünümü bir arada sunar.' },
-  { id:3, name:'Luna Deri Çanta', category:'aksesuar', price:3100, oldPrice:3900, icon:'👜', badge:'sale', desc:'Tam tahıllı deri ve el yapımı detaylarıyla hazırlanmış. Her gün kullanıma uygun.' },
-  { id:4, name:'Ember Trençkot', category:'kadin', price:5650, icon:'🧥', badge:'', desc:'Kashmere yün karışımlı çift katmanlı trençkot. Sonbahar ve kış için ideal.' },
-  { id:5, name:'Noir Oxford Ayakkabı', category:'erkek', price:2800, oldPrice:3200, icon:'👞', badge:'sale', desc:'El boyamalı İtalyan deri üst ve tahta taban. Klasik şıklığın simgesi.' },
-  { id:6, name:'Aurore Kolye', category:'aksesuar', price:890, icon:'💎', badge:'yeni', desc:'925 ayar gümüş zincir üzerine altın kaplama yuvarlak kolye. Minimalist şıklık.' },
-];
-
-let cart = [];
-let currentStep = 1;
-let currentProductId = null;
-
-/* ── CURSOR ─────────────────────────────────────── */
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-let rx=0,ry=0;
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX+'px';
-  cursor.style.top = e.clientY+'px';
-  rx += (e.clientX - rx) * .15;
-  ry += (e.clientY - ry) * .15;
-  ring.style.left = rx+'px';
-  ring.style.top = ry+'px';
-});
-function animRing(){
-  rx += (parseFloat(cursor.style.left||0) - rx) * .12;
-  ry += (parseFloat(cursor.style.top||0) - ry) * .12;
-  ring.style.left = rx+'px';
-  ring.style.top = ry+'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-document.querySelectorAll('button,a').forEach(el=>{
-  el.addEventListener('mouseenter',()=>cursor.classList.add('cursor-grow'));
-  el.addEventListener('mouseleave',()=>cursor.classList.remove('cursor-grow'));
-});
-
-/* ── NAVBAR SCROLL ──────────────────────────────── */
-window.addEventListener('scroll',()=>{
-  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 80);
-  revealOnScroll();
-});
-
-/* ── REVEAL ON SCROLL ───────────────────────────── */
-function revealOnScroll(){
-  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>{
-    const rect = el.getBoundingClientRect();
-    if(rect.top < window.innerHeight - 60) el.classList.add('visible');
-  });
-}
-revealOnScroll();
-
-/* ── SCROLL TO SECTION ──────────────────────────── */
-function scrollTo(id){
-  const el = document.getElementById(id);
-  if(el) el.scrollIntoView({behavior:'smooth'});
-}
-
-/* ── PAGE SYSTEM ────────────────────────────────── */
-function showPage(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(page+'-page').classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-/* ── PRODUCTS RENDER ────────────────────────────── */
-function renderProducts(filter='tumu'){
-  const grid = document.getElementById('products-grid');
-  const filtered = filter==='tumu' ? products : products.filter(p=>p.category===filter||(filter==='indirim'&&p.oldPrice)||(filter==='yeni'&&p.badge==='yeni'));
-  grid.innerHTML = filtered.map((p,i)=>`
-    <div class="product-card reveal reveal-delay-${(i%3)+1}" onclick="openModal(${p.id})">
-      <div class="product-img-wrap">
-        <div class="product-img prod-img-${(i%6)+1}">
-          <div class="product-silhouette">${p.icon}</div>
-        </div>
-        ${p.badge==='yeni'?'<div class="product-badge badge-new">Yeni</div>':''}
-        ${p.badge==='sale'?'<div class="product-badge badge-sale">İndirim</div>':''}
-        <div class="product-actions">
-          <button class="pa-btn" onclick="event.stopPropagation();addToCart(${p.id})">Sepete Ekle</button>
-          <button class="pa-btn" onclick="event.stopPropagation();openModal(${p.id})">İncele</button>
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-meta">
-          <div>
-            <span class="product-price">₺${p.price.toLocaleString('tr-TR')}</span>
-            ${p.oldPrice?`<span class="product-price-old">₺${p.oldPrice.toLocaleString('tr-TR')}</span>`:''}
-          </div>
-          <div class="product-sizes">
-            <div class="size-dot"></div>
-            <div class="size-dot"></div>
-            <div class="size-dot"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-  setTimeout(revealOnScroll, 100);
-}
-renderProducts();
-
-function filterProducts(cat, btn){
-  if(btn){
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  renderProducts(cat);
-  scrollTo('collections');
-}
-
-/* ── TESTIMONIALS SLIDER ────────────────────────── */
-let slideIndex = 0;
-const slides = document.querySelectorAll('.testimonial-slide');
-const dotsContainer = document.getElementById('slider-dots');
-slides.forEach((_,i)=>{
-  const d = document.createElement('div');
-  d.className = 'slider-dot'+(i===0?' active':'');
-  d.onclick = ()=>goSlide(i);
-  dotsContainer.appendChild(d);
-});
-function goSlide(n){
-  slides[slideIndex].classList.remove('active');
-  dotsContainer.children[slideIndex].classList.remove('active');
-  slideIndex = (n+slides.length)%slides.length;
-  slides[slideIndex].classList.add('active');
-  dotsContainer.children[slideIndex].classList.add('active');
-}
-function nextSlide(){ goSlide(slideIndex+1); }
-function prevSlide(){ goSlide(slideIndex-1); }
-setInterval(nextSlide, 5000);
-
-/* ── NEWSLETTER ─────────────────────────────────── */
-function subscribeNewsletter(){
-  const email = document.getElementById('nl-email').value;
-  if(!email.includes('@')){ showToast('Hata','Geçerli bir e-posta girin'); return; }
-  document.querySelector('.newsletter-form').style.display='none';
-  document.getElementById('nl-success').style.display='block';
-  showToast('Harika!','Bültene başarıyla kayıt oldunuz');
-}
-
-/* ── CART ───────────────────────────────────────── */
-function addToCart(id, size='M'){
-  const p = products.find(x=>x.id===id);
-  const existing = cart.find(x=>x.id===id&&x.size===size);
-  if(existing) existing.qty++;
-  else cart.push({...p, qty:1, size});
-  updateCart();
-  showToast('Sepete Eklendi', p.name+' — Beden: '+size);
-}
-function openCart(){ document.getElementById('cart-overlay').classList.add('open'); document.getElementById('cart-drawer').classList.add('open'); }
-function closeCart(){ document.getElementById('cart-overlay').classList.remove('open'); document.getElementById('cart-drawer').classList.remove('open'); }
-function updateCart(){
-  const badge = document.getElementById('cart-badge');
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-  badge.textContent = cart.reduce((s,i)=>s+i.qty,0);
-  document.getElementById('cart-total').textContent = '₺'+total.toLocaleString('tr-TR');
-  const container = document.getElementById('cart-items-container');
-  if(cart.length===0){ container.innerHTML='<div class="cart-empty">Sepetiniz boş<br><br><em>Koleksiyonu keşfetmeye başlayın</em></div>'; return; }
-  container.innerHTML = cart.map((item,i)=>`
-    <div class="cart-item">
-      <div class="cart-item-img">${item.icon}</div>
-      <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-meta">Beden: ${item.size}</div>
-        <div class="cart-item-price">₺${item.price.toLocaleString('tr-TR')}</div>
-        <div class="cart-item-qty">
-          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
-          <span class="qty-val">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-function changeQty(idx, delta){
-  cart[idx].qty += delta;
-  if(cart[idx].qty <= 0) cart.splice(idx,1);
-  updateCart();
-}
-function goToCheckout(){
-  closeCart();
-  updateSummary();
-  showPage('checkout');
-}
-function updateSummary(){
-  const container = document.getElementById('summary-items');
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-  container.innerHTML = cart.map(item=>`
-    <div class="summary-item">
-      <span class="summary-item-name">${item.name} ×${item.qty}</span>
-      <span class="summary-item-price">₺${(item.price*item.qty).toLocaleString('tr-TR')}</span>
-    </div>
-  `).join('');
-  document.getElementById('summary-total').textContent = '₺'+total.toLocaleString('tr-TR');
-}
-
-/* ── CHECKOUT STEPS ─────────────────────────────── */
-function nextStep(){
-  if(currentStep<3){
-    document.getElementById('step-'+currentStep).classList.remove('active');
-    document.getElementById('step-'+currentStep).classList.add('done');
-    document.getElementById('panel-'+currentStep).classList.remove('active');
-    currentStep++;
-    document.getElementById('step-'+currentStep).classList.add('active');
-    document.getElementById('panel-'+currentStep).classList.add('active');
-  }
-}
-function prevStep(){
-  if(currentStep>1){
-    document.getElementById('step-'+currentStep).classList.remove('active');
-    document.getElementById('panel-'+currentStep).classList.remove('active');
-    currentStep--;
-    document.getElementById('step-'+currentStep).classList.remove('done');
-    document.getElementById('step-'+currentStep).classList.add('active');
-    document.getElementById('panel-'+currentStep).classList.add('active');
-  }
-}
-function placeOrder(){
-  document.getElementById('panel-3').classList.remove('active');
-  document.getElementById('panel-success').classList.add('active');
-  cart = []; updateCart();
-  [1,2,3].forEach(i=>{
-    document.getElementById('step-'+i).classList.remove('active','done');
-  });
-  currentStep=1;
-}
-
-/* ── PRODUCT MODAL ──────────────────────────────── */
-function openModal(id){
-  const p = products.find(x=>x.id===id);
-  currentProductId = id;
-  document.getElementById('modal-img').textContent = p.icon;
-  document.getElementById('modal-img').style.fontSize = '8rem';
-  document.getElementById('modal-img').style.opacity = '.15';
-  const bg = ['#1a1714','#131720','#1a1214','#141a12','#1a1618','#181612'];
-  document.getElementById('modal-img').style.background = bg[(id-1)%bg.length];
-  document.getElementById('modal-tag').textContent = {kadin:'Kadın',erkek:'Erkek',aksesuar:'Aksesuar'}[p.category];
-  document.getElementById('modal-name').textContent = p.name;
-  document.getElementById('modal-price').textContent = '₺'+p.price.toLocaleString('tr-TR');
-  document.getElementById('modal-desc').textContent = p.desc;
-  document.querySelectorAll('.size-btn').forEach((b,i)=>b.classList.toggle('active',i===2));
-  document.getElementById('product-modal').classList.add('open');
-}
-function closeModal(e){ if(e.target===document.getElementById('product-modal')) closeModalDirect(); }
-function closeModalDirect(){ document.getElementById('product-modal').classList.remove('open'); }
-function selectSize(btn){ document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
-function addFromModal(){
-  const size = document.querySelector('.size-btn.active')?.textContent || 'M';
-  addToCart(currentProductId, size);
-  closeModalDirect();
-}
-
-/* ── TOAST ──────────────────────────────────────── */
-function showToast(title, msg){
-  const toast = document.getElementById('toast');
-  document.getElementById('toast-title').textContent = title;
-  document.getElementById('toast-msg').textContent = msg;
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'), 3000);
-}
-
-/* ── CARD FORMAT ────────────────────────────────── */
-function formatCard(inp){
-  let v = inp.value.replace(/\D/g,'');
-  inp.value = v.match(/.{1,4}/g)?.join(' ')||v;
-}
-
-/* ── KEYBOARD ───────────────────────────────────── */
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeModalDirect(); closeCart(); }
-});
-</script>
+<script src="assets/script.js"></script>
 </body>
 </html>
