@@ -1,88 +1,104 @@
-🖤 VOGUE LINE — Koleksiyon 2026
+# VogueLine — Premium Moda & Koleksiyon 2026
 
+**VogueLine**, premium moda ürünlerini sergileyen, modern ve responsive bir e-ticaret ön yüz projesidir. Bahar/Yaz 2026 koleksiyonunu kullanıcıya şık bir deneyimle sunar.
 
+---
 
+## 🚀 Özellikler
 
+### Kullanıcı Deneyimi
+- **Ürün Arama Kutusu** — Koleksiyon bölümünde gerçek zamanlı ürün adı/açıklama araması
+- **İsim & Fiyata Göre Sıralama** — A→Z, Z→A, Düşükten Yükseğe, Yüksekten Düşüğe seçenekleri
+- **Kategori Filtreleme** — Kadın, Erkek, Aksesuar, Yeni Gelenler, İndirim filtreleri
+- **Ürün Modalı** — Beden seçimi, detay görünümü
+- **Sepet & Favoriler** — Gerçek zamanlı sepet yönetimi, favori ürün listesi
+- **Özel Cursor & Animasyonlar** — Premium marka deneyimi
+- **Testimonials Slider** — Otomatik geçişli müşteri yorumları
+- **Responsive Tasarım** — Mobil, tablet ve masaüstü uyumlu
 
+### Veri Yönetimi (JSON)
+- Tüm ürün verileri `data/products.json` dosyasından `fetch()` API ile asenkron olarak yüklenir
+- Ürünler dinamik olarak kart yapısında DOM'a render edilir
+- Sepet ve favoriler `localStorage` ile kalıcı olarak saklanır
 
-Modern, lüks ve animasyon odaklı bir frontend e-ticaret arayüzü.
-Tek dosya yapısıyla geliştirilmiş olup güçlü UI/UX deneyimi sunar.
+### Kullanıcı Kimlik Doğrulama (localStorage tabanlı)
+- **Kayıt Ol** — Ad, e-posta ve şifre ile yeni hesap oluşturma (doğrulama + şifre eşleşme kontrolü)
+- **Giriş Yap** — Mevcut hesapla oturum açma
+- **Çıkış Yap** — Oturumu kapatma
+- Kullanıcılar ve oturum bilgisi `localStorage`'da saklanır; backend olmadan tam işlevsellik
 
-🌐 Canlı Demo
+### Profesyonel Detaylar
+- Tüm sayfalarda `<title>` etiketleri ve SVG favicon
+- Kırık linkler düzeltildi (footer & nav)
+- Kod tekrarları azaltıldı (ortak `script.js`, merkezi render fonksiyonları)
+- Checkout akışı (3 adım: Bilgiler → Teslimat → Ödeme)
 
-[https://kullaniciadi.github.io/vogue-line/](https://github.com/web-projesi-2026/web_portfolio_emrullahgokgoz)
+---
 
+## 🛠 Kullanılan Teknolojiler
 
-🚀 Özellikler
+| Teknoloji | Kullanım Amacı |
+|-----------|---------------|
+| HTML5     | Sayfa yapısı ve semantik işaretleme |
+| CSS3      | Özel değişkenler, animasyonlar, responsive grid |
+| JavaScript (ES6+) | Dinamik DOM, fetch API, localStorage, async/await |
+| JSON      | Ürün verilerini dışarıdan yükleme |
+| Google Fonts | Cormorant Garamond, Bebas Neue, DM Sans |
 
-🎨 Lüks tasarım (Dark + Gold UI)
-🖱️ Custom cursor sistemi
-🧠 Vanilla JS ile dinamik yapı
-🛍️ Ürün listeleme & filtreleme
-🛒 Sepet (Cart Drawer)
-💳 Checkout sistemi (multi-step form)
-💬 Yorum slider
-📩 Newsletter sistemi
-🎞️ Gelişmiş animasyonlar
-🧱 Proje Yapısı
-📦 vogue-line
- ┣ 📄 index.html
- ┣ 📁 assets
- ┃ ┗ 🖼️ preview.png
- ┗ 📄 README.md
+---
 
-🧩 Bölümler
+## 📁 Proje Yapısı
 
-Bölüm	Açıklama
-Navbar	Menü + Sepet
-Hero	Ana tanıtım alanı
-Categories	Kategori kartları
-Products	Ürün listesi
-Featured	Öne çıkan alan
-Testimonials	Yorum slider
-Newsletter	Mail abonelik
-Footer	Alt bilgi
-Cart	Sepet paneli
-Checkout	Sipariş formu
+```
+vogueline/
+├── index.html              # Ana sayfa (hero, koleksiyon, checkout)
+├── data/
+│   └── products.json       # Ürün veritabanı (JSON)
+├── assets/
+│   ├── style.css           # Global stiller ve bileşenler
+│   └── script.js           # Tüm JavaScript işlevleri
+└── pages/
+    ├── about.html          # Hakkımızda sayfası
+    ├── contact.html        # İletişim sayfası
+    └── projects.html       # Projeler / Lookbook sayfası
+```
 
-🛠️ Kullanılan Teknolojiler
-HTML5
-CSS3 (Grid, Flexbox, Animations)
-Vanilla JavaScript
+---
 
-🎨 Tasarım Sistemi
-Renkler
---bg: #0a0a08;
---gold: #c9a84c;
---cream: #f0ead8;
---accent: #d4526e;
-Fontlar
-Bebas Neue (Başlık)
-Cormorant Garamond (Serif)
-DM Sans (Body)
+## ⚙️ Kurulum & Çalıştırma
 
-⚙️ Kurulum
-git clone https://github.com/kullaniciadi/vogue-line.git
-cd vogue-line
+Proje saf HTML/CSS/JS'den oluştuğundan herhangi bir derleme adımı gerekmez.
 
+```bash
+# Yerel geliştirme için (fetch() için HTTP sunucusu gereklidir)
+npx serve .
+# veya
+python3 -m http.server 8080
+```
 
-🧪 Geliştirme Fikirleri
-🔌 Backend (Node.js / PHP)
-🛒 Gerçek ödeme sistemi
-🔐 Kullanıcı sistemi
-📦 API entegrasyonu
-📱 Responsive iyileştirme
-🤝 Katkı Sağlama
-git checkout -b feature/yeni-ozellik
-git commit -m "Yeni özellik eklendi"
-git push origin feature/yeni-ozellik
+Tarayıcıda `http://localhost:8080` adresini açın.
 
-Sonra Pull Request aç 🚀
+> ⚠️ `fetch()` çağrıları CORS kısıtlamaları nedeniyle doğrudan `file://` protokolüyle çalışmaz; bir HTTP sunucusu kullanın.
 
-📄 Lisans
+---
 
-MIT License
+## 📸 Ekran Görüntüleri
 
-👨‍💻 Geliştirici
+| Sayfa | Açıklama |
+|-------|----------|
+| Ana Sayfa — Hero | Tam ekran hero bölümü, marquee animasyonu |
+| Koleksiyon | Arama, sıralama, filtreleme, ürün kartları |
+| Giriş / Kayıt | Modal tabanlı auth sistemi |
+| Sepet & Favoriler | Yan panel çekmeceler |
+| Checkout | 3 adımlı ödeme akışı |
 
-Emrullah Gökgöz
+---
+
+## 👤 Geliştirici Notları
+
+- Kullanıcı kimlik doğrulama sistemi `localStorage` tabanlıdır; gerçek bir projede şifreler backend tarafında hash'lenerek saklanmalıdır.
+- Ürün görselleri CSS gradient ve emoji ikonlarla temsil edilmiştir; gerçek proje için görsel URL'leri `products.json`'a eklenmelidir.
+
+---
+
+© 2026 VogueLine. Tüm hakları saklıdır.
