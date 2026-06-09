@@ -616,7 +616,7 @@ footer {
           <div class="contact-icon">✉️</div>
           <div class="contact-card-text">
             <div class="contact-card-label">E-posta</div>
-            <div class="contact-card-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1c8cfc7cee1d7cec6d4c4cdc8cfc48fc2cecc8fd5d3">[email&#160;protected]</a></div>
+            <div class="contact-card-val">info@vogueline.com</div>
             <div class="contact-card-note">24 saat içinde yanıt</div>
           </div>
         </div>
@@ -772,8 +772,42 @@ footer {
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-/* ── HAMBURGER MENU ─────────────────────────────── */
+
+<script>
+/* ── CURSOR ─────────────────────────────────────────────── */
+const cur  = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let rx = 0, ry = 0;
+
+if (cur && ring) {
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+  (function animRing() {
+    rx += (parseFloat(cur.style.left || 0) - rx) * 0.12;
+    ry += (parseFloat(cur.style.top  || 0) - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('button, a').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width  = '60px';
+      cur.style.height = '60px';
+      cur.style.background = 'transparent';
+      cur.style.border = '1px solid var(--gold)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width  = '12px';
+      cur.style.height = '12px';
+      cur.style.background = 'var(--gold)';
+      cur.style.border = 'none';
+    });
+  });
+}
+
+/* ── HAMBURGER MENU ─────────────────────────────────────── */
 const hamburger = document.getElementById('hamburger');
 const mobileNav = document.getElementById('mobile-nav');
 function toggleMenu() {
@@ -789,38 +823,52 @@ function closeMenu() {
 if (hamburger) hamburger.addEventListener('click', toggleMenu);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-</script><script>
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 80);
-});
+/* ── NAVBAR SCROLL ──────────────────────────────────────── */
 window.addEventListener('scroll', () => {
   document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 50);
+  revealOnScroll();
 });
+
+/* ── REVEAL ON SCROLL ───────────────────────────────────── */
 function revealOnScroll() {
   document.querySelectorAll('.reveal').forEach(el => {
     if (el.getBoundingClientRect().top < window.innerHeight * .88) el.classList.add('visible');
   });
 }
-window.addEventListener('scroll', revealOnScroll);
 revealOnScroll();
 
+/* ── KONU SEÇME ─────────────────────────────────────────── */
 function selectSubject(btn) {
   document.querySelectorAll('.subject-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
 
+/* ── KARAKTER SAYACI ────────────────────────────────────── */
 function updateCount() {
   const msg = document.getElementById('f-message');
   document.getElementById('char-count').textContent = msg.value.length + ' / 500';
 }
 
+/* ── FORM GÖNDER ────────────────────────────────────────── */
 function sendMessage() {
-  const email = document.getElementById('f-email').value;
-  const name = document.getElementById('f-name').value;
-  if (!name.trim() || !email.includes('@')) {
-    document.getElementById('f-name').style.borderColor = !name.trim() ? 'var(--accent)' : '';
-    document.getElementById('f-email').style.bord
+  const name  = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const msg   = document.getElementById('f-message').value.trim();
+
+  // Hata sıfırla
+  ['f-name','f-email','f-message'].forEach(id => {
+    document.getElementById(id).style.borderColor = '';
+  });
+
+  let valid = true;
+  if (!name)              { document.getElementById('f-name').style.borderColor    = 'var(--accent)'; valid = false; }
+  if (!email.includes('@')){ document.getElementById('f-email').style.borderColor  = 'var(--accent)'; valid = false; }
+  if (!msg)               { document.getElementById('f-message').style.borderColor = 'var(--accent)'; valid = false; }
+  if (!valid) return;
+
+  document.getElementById('contact-form').style.display   = 'none';
+  document.getElementById('form-success').style.display   = 'block';
+}
+</script>
+</body>
+</html>

@@ -760,14 +760,30 @@ footer {
 /* Cursor */
 const cur = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-  setTimeout(() => {
-    ring.style.left = e.clientX + 'px';
-    ring.style.top = e.clientY + 'px';
-  }, 80);
-});
+let rx = 0, ry = 0;
+if (cur && ring) {
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+  (function animRing() {
+    rx += (parseFloat(cur.style.left || 0) - rx) * 0.12;
+    ry += (parseFloat(cur.style.top  || 0) - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('button, a').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '60px'; cur.style.height = '60px';
+      cur.style.background = 'transparent'; cur.style.border = '1px solid var(--gold)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      cur.style.background = 'var(--gold)'; cur.style.border = 'none';
+    });
+  });
+}
 
 /* Nav scroll */
 window.addEventListener('scroll', () => {
