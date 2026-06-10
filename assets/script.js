@@ -1,676 +1,690 @@
-/* ═══════════════════════════════════════════════════════════════
-   VogueLine — script.js
-   ▸ Ürün verileri JSON dosyasından (fetch) okunur
-   ▸ Sepet ve Favoriler localStorage'a kaydedilir
-   ▸ Arama kutusu, isim/fiyat sıralama, kullanıcı auth sistemi
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   VogueLine — assets/script.js
+   Veritabanından ürün çeker, sepet/favorileri yönetir
+═══════════════════════════════════════════════════════════ */
 
-/* ── GLOBAL STATE ──────────────────────────────────────────── */
-let products         = [];
-let cart             = [];
-let favorites        = [];
-let currentStep      = 1;
-let currentProductId = null;
-let currentFilter    = 'tumu';
-let currentSort      = 'default';
-let searchQuery      = '';
+/* ── STATE ──────────────────────────────────────────────── */
+let allProducts   = [];
+let filteredProds = [];
+let cart          = JSON.parse(localStorage.getItem('vl_cart') || '[]');
+let favorites     = JSON.parse(localStorage.getItem('vl_favs') || '[]');
+let currentFilter = 'tumu';
+let currentSort   = 'default';
+let currentSearch = '';
+let modalProduct  = null;
 
-/* ── localStorage ANAHTARLARI ──────────────────────────────── */
-const LS_CART  = 'vogueline_cart';
-const LS_FAV   = 'vogueline_favorites';
-const LS_USER  = 'vogueline_user';
-const LS_USERS = 'vogueline_users';
+/* ── INIT ───────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  initCursor();
+  initNav();
+  initSlider();
+  initReveal();
+  updateCartBadge();
+  updateFavBadge();
+  loadProducts();
+  updateAuthBtn();
+  duplicateMarquee();
+});
 
-/* ════════════════════════════════════════════════════════════
-   1. JSON VERİSİNİ FETCH İLE YÜKLE
-   ════════════════════════════════════════════════════════════ */
-async function loadProducts() {
-  try {
-    const res  = await fetch('data/products.json');
-    if (!res.ok) throw new Error('JSON yüklenemedi: ' + res.status);
-    products = await res.json();
-    renderProducts();
-    initFavoritesUI();
-  } catch (err) {
-    console.error('Ürün verisi hatası:', err);
-    showToast('Hata', 'Ürün verileri yüklenemedi.');
-  }
-}
-
-/* ════════════════════════════════════════════════════════════
-   2. localStorage — KAYDET & YÜKLE
-   ════════════════════════════════════════════════════════════ */
-function loadFromStorage() {
-  try {
-    const savedCart = localStorage.getItem(LS_CART);
-    const savedFav  = localStorage.getItem(LS_FAV);
-    if (savedCart) cart      = JSON.parse(savedCart);
-    if (savedFav)  favorites = JSON.parse(savedFav);
-  } catch (e) {
-    console.warn('Storage okuma hatası:', e);
-  }
-}
-
-function saveCart()      { localStorage.setItem(LS_CART, JSON.stringify(cart)); }
-function saveFavorites() { localStorage.setItem(LS_FAV,  JSON.stringify(favorites)); }
-
-/* ════════════════════════════════════════════════════════════
-   3. FAVORİLER
-   ════════════════════════════════════════════════════════════ */
-function toggleFavorite(id, event) {
-  if (event) event.stopPropagation();
-  const idx = favorites.indexOf(id);
-  if (idx === -1) {
-    favorites.push(id);
-    showToast('Favorilere Eklendi ♡', products.find(p => p.id === id)?.name);
-  } else {
-    favorites.splice(idx, 1);
-    showToast('Favorilerden Çıkarıldı', products.find(p => p.id === id)?.name);
-  }
-  saveFavorites();
-  updateFavButtons();
-  updateFavCount();
-}
-
-function isFavorite(id) { return favorites.includes(id); }
-
-function updateFavButtons() {
-  document.querySelectorAll('[data-fav-id]').forEach(btn => {
-    const id = parseInt(btn.dataset.favId);
-    btn.classList.toggle('fav-active', isFavorite(id));
-    btn.textContent = isFavorite(id) ? '♥' : '♡';
-    btn.title = isFavorite(id) ? 'Favorilerden çıkar' : 'Favorilere ekle';
-  });
-}
-
-function updateFavCount() {
-  const badge = document.getElementById('fav-badge');
-  if (badge) badge.textContent = favorites.length;
-}
-
-function initFavoritesUI() { updateFavButtons(); updateFavCount(); }
-
-/* ════════════════════════════════════════════════════════════
-   4. ARAMA & SIRALAMA
-   ════════════════════════════════════════════════════════════ */
-function handleSearch(val) {
-  searchQuery = val.toLowerCase().trim();
-  renderProducts();
-}
-
-function handleSort(val) {
-  currentSort = val;
-  renderProducts();
-}
-
-function applySearchAndSort(list) {
-  // Arama filtresi
-  if (searchQuery) {
-    list = list.filter(p =>
-      p.name.toLowerCase().includes(searchQuery) ||
-      p.desc.toLowerCase().includes(searchQuery)
-    );
-  }
-  // Sıralama
-  if (currentSort === 'name-asc')   list = [...list].sort((a,b) => a.name.localeCompare(b.name, 'tr'));
-  if (currentSort === 'name-desc')  list = [...list].sort((a,b) => b.name.localeCompare(a.name, 'tr'));
-  if (currentSort === 'price-asc')  list = [...list].sort((a,b) => a.price - b.price);
-  if (currentSort === 'price-desc') list = [...list].sort((a,b) => b.price - a.price);
-  return list;
-}
-
-/* ════════════════════════════════════════════════════════════
-   5. ÜRÜN KARTLARINI RENDER ET
-   ════════════════════════════════════════════════════════════ */
-function renderProducts(filter) {
-  if (filter !== undefined) currentFilter = filter;
+/* ── PRODUCTS FROM API ──────────────────────────────────── */
+async function loadProducts(kategori = 'tumu', q = '', siralama = 'default') {
   const grid = document.getElementById('products-grid');
   if (!grid) return;
 
-  let filtered = products;
-  if (currentFilter === 'indirim') {
-    filtered = products.filter(p => p.oldPrice);
-  } else if (currentFilter === 'yeni') {
-    filtered = products.filter(p => p.badge === 'yeni');
-  } else if (currentFilter !== 'tumu') {
-    filtered = products.filter(p => p.category === currentFilter);
+  grid.innerHTML = `
+    <div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)">
+      <div style="font-size:2rem;margin-bottom:1rem;animation:slowSpin 1s linear infinite;display:inline-block">✦</div>
+      <p style="font-family:var(--ff-serif);font-style:italic">Koleksiyon yükleniyor...</p>
+    </div>`;
+
+  try {
+    const params = new URLSearchParams({ kategori, siralama });
+    if (q) params.set('q', q);
+
+    const res  = await fetch(`/api/urunler.php?${params}`);
+    const data = await res.json();
+
+    allProducts   = data;
+    filteredProds = data;
+    renderProducts(data);
+  } catch (err) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)">
+        <p style="font-family:var(--ff-serif);font-style:italic">Ürünler yüklenirken hata oluştu.</p>
+      </div>`;
   }
+}
 
-  filtered = applySearchAndSort(filtered);
+function renderProducts(products) {
+  const grid = document.getElementById('products-grid');
+  if (!grid) return;
 
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;font-family:var(--ff-serif);font-style:italic;color:var(--muted);">Arama sonucu bulunamadı.</div>`;
+  if (!products.length) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem;">
+        <p style="font-family:var(--ff-serif);font-style:italic;color:var(--muted);font-size:1.2rem">
+          Bu kategoride ürün bulunamadı.
+        </p>
+      </div>`;
     return;
   }
 
-  const bgList = ['#1a1714','#131720','#1a1214','#141a12','#1a1618','#181612'];
+  grid.innerHTML = products.map((p, i) => {
+    const isFav   = favorites.some(f => f.id === p.id);
+    const hasSale = !!p.indirimli_fiyat;
+    const isNew   = !!p.one_cikan;
 
-  grid.innerHTML = filtered.map((p, i) => {
-    const bg         = bgList[i % bgList.length];
-    const favActive  = isFavorite(p.id) ? 'fav-active' : '';
-    const favIcon    = isFavorite(p.id) ? '♥' : '♡';
-    const discountPct = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : null;
+    // Fotoğraf veya emoji placeholder
+    const imgHtml = p.foto_url
+      ? `<img src="${p.foto_url}" alt="${escHtml(p.ad)}"
+             style="width:100%;height:100%;object-fit:cover;"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+             loading="lazy">
+         <div class="product-silhouette" style="display:none">👗</div>`
+      : `<div class="product-silhouette">👗</div>`;
+
+    // Bedenler
+    const sizes = (p.bedenler || []).slice(0, 4).map(b =>
+      `<span class="size-dot" title="${escHtml(b)}"></span>`
+    ).join('');
 
     return `
-    <div class="product-card reveal reveal-delay-${(i % 3) + 1}" onclick="openModal(${p.id})">
-      <div class="product-img-wrap">
-        <div class="product-img" style="background:${bg};display:flex;align-items:center;justify-content:center;">
-          <div class="product-silhouette">${p.icon}</div>
-        </div>
-        ${p.badge === 'yeni' ? '<div class="product-badge badge-new">Yeni</div>' : ''}
-        ${discountPct ? `<div class="product-badge badge-sale">%${discountPct} İndirim</div>` : ''}
-        <button class="fav-btn ${favActive}" data-fav-id="${p.id}"
-          onclick="toggleFavorite(${p.id}, event)"
-          title="${favActive ? 'Favorilerden çıkar' : 'Favorilere ekle'}">${favIcon}</button>
+    <div class="product-card reveal" style="transition-delay:${(i % 3) * 0.1}s"
+         data-id="${p.id}">
+      <div class="product-img-wrap prod-img-${(i % 6) + 1}">
+        ${imgHtml}
+        ${hasSale ? `<span class="product-badge badge-sale">İndirim</span>` : ''}
+        ${isNew && !hasSale ? `<span class="product-badge badge-new">Yeni</span>` : ''}
         <div class="product-actions">
-          <button class="pa-btn" onclick="event.stopPropagation(); addToCart(${p.id})">Sepete Ekle</button>
-          <button class="pa-btn" onclick="event.stopPropagation(); openModal(${p.id})">İncele</button>
+          <button class="pa-btn" onclick="openModal(${p.id})">Detay</button>
+          <button class="pa-btn" onclick="addToCart(${p.id})">Sepete Ekle</button>
+          <button class="pa-btn" onclick="toggleFav(${p.id})" id="fav-btn-${p.id}">
+            ${isFav ? '♥' : '♡'}
+          </button>
         </div>
       </div>
       <div class="product-info">
-        <div class="product-name">${p.name}</div>
+        <div class="product-name">${escHtml(p.ad)}</div>
         <div class="product-meta">
           <div>
-            <span class="product-price">₺${p.price.toLocaleString('tr-TR')}</span>
-            ${p.oldPrice ? `<span class="product-price-old">₺${p.oldPrice.toLocaleString('tr-TR')}</span>` : ''}
+            ${hasSale
+              ? `<span class="product-price">${p.indirimli_fiyat_fmt}</span>
+                 <span class="product-price-old">${p.fiyat_fmt}</span>`
+              : `<span class="product-price">${p.fiyat_fmt}</span>`
+            }
           </div>
-          <div class="product-sizes">
-            <div class="size-dot"></div><div class="size-dot"></div><div class="size-dot"></div>
-          </div>
+          <div class="product-sizes">${sizes}</div>
         </div>
       </div>
     </div>`;
   }).join('');
 
-  setTimeout(revealOnScroll, 80);
+  // Reveal animasyonu tetikle
+  setTimeout(() => {
+    document.querySelectorAll('#products-grid .reveal').forEach(el => {
+      el.classList.add('visible');
+    });
+  }, 100);
 }
 
-function filterProducts(cat, btn) {
+/* ── FILTER / SEARCH / SORT ─────────────────────────────── */
+function filterProducts(kat, btn) {
+  currentFilter = kat;
   if (btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
-  renderProducts(cat);
-  scrollToSection('collections');
+  loadProducts(currentFilter, currentSearch, currentSort);
+  if (kat !== 'tumu') {
+    document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
-/* ════════════════════════════════════════════════════════════
-   6. SEPET
-   ════════════════════════════════════════════════════════════ */
-function addToCart(id, size = 'M') {
-  const p = products.find(x => x.id === id);
+function handleSearch(val) {
+  currentSearch = val;
+  loadProducts(currentFilter, currentSearch, currentSort);
+}
+
+function handleSort(val) {
+  currentSort = val;
+  loadProducts(currentFilter, currentSearch, currentSort);
+}
+
+/* ── PRODUCT MODAL ──────────────────────────────────────── */
+function openModal(id) {
+  const p = allProducts.find(x => x.id == id);
   if (!p) return;
-  const existing = cart.find(x => x.id === id && x.size === size);
-  if (existing) { existing.qty++; }
-  else          { cart.push({ ...p, qty: 1, size }); }
+  modalProduct = p;
+
+  // Görseli ayarla
+  const imgEl = document.getElementById('modal-img');
+  if (p.foto_url) {
+    imgEl.innerHTML = `<img src="${p.foto_url}" alt="${escHtml(p.ad)}"
+      style="width:100%;height:100%;object-fit:cover;"
+      onerror="this.outerHTML='<div style=font-size:8rem;opacity:.15>👗</div>'">`;
+  } else {
+    imgEl.innerHTML = `<div style="font-size:8rem;opacity:.15">👗</div>`;
+  }
+
+  document.getElementById('modal-tag').textContent   = p.kategori || '';
+  document.getElementById('modal-name').textContent  = p.ad;
+  document.getElementById('modal-desc').textContent  = p.aciklama || '';
+
+  const priceEl = document.getElementById('modal-price');
+  priceEl.innerHTML = p.indirimli_fiyat_fmt
+    ? `${p.indirimli_fiyat_fmt} <span style="text-decoration:line-through;color:var(--muted);font-size:.85em">${p.fiyat_fmt}</span>`
+    : p.fiyat_fmt;
+
+  // Bedenler
+  const sizesEl = document.querySelector('.modal-sizes');
+  if (p.bedenler && p.bedenler.length) {
+    sizesEl.innerHTML = p.bedenler.map((b, i) =>
+      `<button class="size-btn${i===0?' active':''}" onclick="selectSize(this)">${escHtml(b)}</button>`
+    ).join('');
+  } else {
+    sizesEl.innerHTML = '<span style="color:var(--muted);font-size:.85rem">Standart beden</span>';
+  }
+
+  // Favori butonu
+  const isFav = favorites.some(f => f.id === p.id);
+  document.getElementById('modal-fav-btn').textContent =
+    isFav ? 'Favorilerden Çıkar ♥' : 'Favorilere Ekle ♡';
+
+  document.getElementById('product-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('product-modal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('product-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function selectSize(btn) {
+  btn.closest('.modal-sizes').querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function addFromModal() {
+  if (!modalProduct) return;
+  const secilenBeden = document.querySelector('.modal-sizes .size-btn.active')?.textContent || 'Standart';
+  addToCartWithSize(modalProduct.id, secilenBeden);
+  closeModalDirect();
+}
+
+/* ── CART ───────────────────────────────────────────────── */
+function addToCart(id) {
+  const p = allProducts.find(x => x.id == id);
+  if (!p) return;
+  addToCartWithSize(id, 'M');
+}
+
+function addToCartWithSize(id, beden) {
+  const p = allProducts.find(x => x.id == id);
+  if (!p) return;
+
+  const fiyat = p.indirimli_fiyat || p.fiyat;
+  const existing = cart.find(c => c.id == id && c.beden === beden);
+
+  if (existing) {
+    existing.adet++;
+  } else {
+    cart.push({
+      id, ad: p.ad, fiyat: parseFloat(fiyat),
+      fiyat_fmt: p.indirimli_fiyat_fmt || p.fiyat_fmt,
+      foto_url: p.foto_url, beden, adet: 1
+    });
+  }
+
   saveCart();
-  updateCartUI();
-  showToast('Sepete Eklendi ✦', p.name + ' — Beden: ' + size);
+  updateCartBadge();
+  showToast('Sepete Eklendi', p.ad + ' — Beden: ' + beden);
+}
+
+function saveCart() {
+  localStorage.setItem('vl_cart', JSON.stringify(cart));
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s, c) => s + c.adet, 0);
+  const badge = document.getElementById('cart-badge');
+  if (badge) badge.textContent = total;
 }
 
 function openCart() {
+  renderCartItems();
   document.getElementById('cart-overlay').classList.add('open');
   document.getElementById('cart-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeCart() {
   document.getElementById('cart-overlay').classList.remove('open');
   document.getElementById('cart-drawer').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-function changeQty(idx, delta) {
-  cart[idx].qty += delta;
-  if (cart[idx].qty <= 0) cart.splice(idx, 1);
-  saveCart();
-  updateCartUI();
-}
+function renderCartItems() {
+  const el = document.getElementById('cart-items-container');
+  if (!el) return;
 
-function updateCartUI() {
-  const totalQty   = cart.reduce((s, i) => s + i.qty, 0);
-  const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const badge = document.getElementById('cart-badge');
-  if (badge) badge.textContent = totalQty;
-  const totalEl = document.getElementById('cart-total');
-  if (totalEl) totalEl.textContent = '₺' + totalPrice.toLocaleString('tr-TR');
-  const container = document.getElementById('cart-items-container');
-  if (!container) return;
-  if (cart.length === 0) {
-    container.innerHTML = '<div class="cart-empty">Sepetiniz boş<br><br><em>Koleksiyonu keşfetmeye başlayın</em></div>';
+  if (!cart.length) {
+    el.innerHTML = `<div class="cart-empty">Sepetiniz boş<br><br><em>Koleksiyonu keşfetmeye başlayın</em></div>`;
+    document.getElementById('cart-total').textContent = '₺0';
     return;
   }
-  container.innerHTML = cart.map((item, i) => `
+
+  el.innerHTML = cart.map(item => `
     <div class="cart-item">
-      <div class="cart-item-img">${item.icon}</div>
+      <div class="cart-item-img">
+        ${item.foto_url
+          ? `<img src="${item.foto_url}" style="width:100%;height:100%;object-fit:cover"
+               onerror="this.outerHTML='<span style=font-size:2.5rem;opacity:.4>👗</span>'">`
+          : '<span style="font-size:2.5rem;opacity:.4">👗</span>'}
+      </div>
       <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-meta">Beden: ${item.size}</div>
-        <div class="cart-item-price">₺${item.price.toLocaleString('tr-TR')}</div>
+        <div class="cart-item-name">${escHtml(item.ad)}</div>
+        <div class="cart-item-meta">Beden: ${escHtml(item.beden)}</div>
+        <div class="cart-item-price">${item.fiyat_fmt}</div>
         <div class="cart-item-qty">
-          <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
-          <span class="qty-val">${item.qty}</span>
-          <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+          <button class="qty-btn" onclick="changeQty(${item.id},'${item.beden}',-1)">−</button>
+          <span class="qty-val">${item.adet}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},'${item.beden}',1)">+</button>
+          <button style="background:none;border:none;color:var(--muted);cursor:pointer;margin-left:.5rem;font-size:.75rem"
+                  onclick="removeFromCart(${item.id},'${item.beden}')">Kaldır</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`
+  ).join('');
+
+  const total = cart.reduce((s, c) => s + c.fiyat * c.adet, 0);
+  document.getElementById('cart-total').textContent =
+    '₺' + total.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+}
+
+function changeQty(id, beden, delta) {
+  const item = cart.find(c => c.id == id && c.beden === beden);
+  if (!item) return;
+  item.adet = Math.max(1, item.adet + delta);
+  saveCart(); updateCartBadge(); renderCartItems();
+}
+
+function removeFromCart(id, beden) {
+  cart = cart.filter(c => !(c.id == id && c.beden === beden));
+  saveCart(); updateCartBadge(); renderCartItems();
 }
 
 function goToCheckout() {
   closeCart();
-  updateSummary();
+  renderSummary();
   showPage('checkout');
 }
 
-function updateSummary() {
-  const container = document.getElementById('summary-items');
-  const total     = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  if (!container) return;
-  container.innerHTML = cart.map(item => `
-    <div class="summary-item">
-      <span class="summary-item-name">${item.name} ×${item.qty}</span>
-      <span class="summary-item-price">₺${(item.price * item.qty).toLocaleString('tr-TR')}</span>
-    </div>`).join('');
-  const totalEl = document.getElementById('summary-total');
-  if (totalEl) totalEl.textContent = '₺' + total.toLocaleString('tr-TR');
+function renderSummary() {
+  const el = document.getElementById('summary-items');
+  if (!el) return;
+  el.innerHTML = cart.map(c =>
+    `<div class="summary-item">
+      <span class="summary-item-name">${escHtml(c.ad)} ×${c.adet}</span>
+      <span class="summary-item-price">₺${(c.fiyat * c.adet).toLocaleString('tr-TR',{minimumFractionDigits:2})}</span>
+    </div>`
+  ).join('');
+  const total = cart.reduce((s, c) => s + c.fiyat * c.adet, 0);
+  const el2 = document.getElementById('summary-total');
+  if (el2) el2.textContent = '₺' + total.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
 }
 
-/* ════════════════════════════════════════════════════════════
-   7. FAVORİLER PANELİ
-   ════════════════════════════════════════════════════════════ */
-function openFavorites() {
-  updateFavDrawer();
-  document.getElementById('fav-overlay').classList.add('open');
-  document.getElementById('fav-drawer').classList.add('open');
-}
-
-function closeFavorites() {
-  document.getElementById('fav-overlay').classList.remove('open');
-  document.getElementById('fav-drawer').classList.remove('open');
-}
-
-function updateFavDrawer() {
-  const container  = document.getElementById('fav-items-container');
-  if (!container) return;
-  const favProducts = products.filter(p => favorites.includes(p.id));
-  if (favProducts.length === 0) {
-    container.innerHTML = '<div class="cart-empty">Henüz favori eklemediniz<br><br><em>♡ ile ürünleri favorileyin</em></div>';
-    return;
-  }
-  container.innerHTML = favProducts.map(p => `
-    <div class="cart-item">
-      <div class="cart-item-img">${p.icon}</div>
-      <div class="cart-item-info">
-        <div class="cart-item-name">${p.name}</div>
-        <div class="cart-item-meta">₺${p.price.toLocaleString('tr-TR')}</div>
-        <div style="display:flex;gap:.5rem;margin-top:.7rem;">
-          <button class="pa-btn" style="flex:1;border:1px solid rgba(201,168,76,.3);padding:.5rem;"
-            onclick="addToCart(${p.id}); closeFavorites();">Sepete Ekle</button>
-          <button class="qty-btn" onclick="toggleFavorite(${p.id}); updateFavDrawer();" title="Çıkar">✕</button>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-/* ════════════════════════════════════════════════════════════
-   8. ÜRÜN MODALI
-   ════════════════════════════════════════════════════════════ */
-function openModal(id) {
-  const p = products.find(x => x.id === id);
+/* ── FAVORITES ──────────────────────────────────────────── */
+function toggleFav(id) {
+  const p = allProducts.find(x => x.id == id);
   if (!p) return;
-  currentProductId = id;
-  const bgList = ['#1a1714','#131720','#1a1214','#141a12','#1a1618','#181612'];
-  const bg = bgList[(id - 1) % bgList.length];
-  const modalImg = document.getElementById('modal-img');
-  modalImg.textContent = p.icon;
-  modalImg.style.background = bg;
-  document.getElementById('modal-tag').textContent  = { kadin:'Kadın', erkek:'Erkek', aksesuar:'Aksesuar' }[p.category] || p.category;
-  document.getElementById('modal-name').textContent = p.name;
-  document.getElementById('modal-price').innerHTML  = `₺${p.price.toLocaleString('tr-TR')}${p.oldPrice ? ` <span style="text-decoration:line-through;color:var(--muted);font-size:.85em;">₺${p.oldPrice.toLocaleString('tr-TR')}</span>` : ''}`;
-  document.getElementById('modal-desc').textContent = p.desc;
-  const sizesEl = document.getElementById('modal-sizes');
-  sizesEl.innerHTML = (p.sizes || ['XS','S','M','L','XL']).map((s, i) =>
-    `<button class="size-btn${i===0?' active':''}" onclick="selectSize(this)">${s}</button>`).join('');
-  const favBtn = document.getElementById('modal-fav-btn');
-  if (favBtn) {
-    favBtn.textContent = isFavorite(id) ? 'Favorilerden Çıkar ♥' : 'Favorilere Ekle ♡';
-    favBtn.dataset.favId = id;
-    favBtn.classList.toggle('fav-active', isFavorite(id));
-    favBtn.onclick = () => {
-      toggleFavorite(id);
-      favBtn.textContent = isFavorite(id) ? 'Favorilerden Çıkar ♥' : 'Favorilere Ekle ♡';
-      favBtn.classList.toggle('fav-active', isFavorite(id));
-    };
-  }
-  document.getElementById('product-modal').classList.add('open');
-}
 
-function closeModal(e)  { if (e.target === document.getElementById('product-modal')) closeModalDirect(); }
-function closeModalDirect() { document.getElementById('product-modal').classList.remove('open'); }
-function selectSize(btn) {
-  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-function addFromModal() {
-  const size = document.querySelector('.size-btn.active')?.textContent || 'M';
-  addToCart(currentProductId, size);
-  closeModalDirect();
-}
-
-/* ════════════════════════════════════════════════════════════
-   9. CHECKOUT ADIMLARI
-   ════════════════════════════════════════════════════════════ */
-function nextStep() {
-  if (currentStep < 3) {
-    document.getElementById('step-' + currentStep).classList.remove('active');
-    document.getElementById('step-' + currentStep).classList.add('done');
-    document.getElementById('panel-' + currentStep).classList.remove('active');
-    currentStep++;
-    document.getElementById('step-' + currentStep).classList.add('active');
-    document.getElementById('panel-' + currentStep).classList.add('active');
-  }
-}
-function prevStep() {
-  if (currentStep > 1) {
-    document.getElementById('step-' + currentStep).classList.remove('active');
-    document.getElementById('panel-' + currentStep).classList.remove('active');
-    currentStep--;
-    document.getElementById('step-' + currentStep).classList.remove('done');
-    document.getElementById('step-' + currentStep).classList.add('active');
-    document.getElementById('panel-' + currentStep).classList.add('active');
-  }
-}
-function placeOrder() {
-  document.getElementById('panel-3').classList.remove('active');
-  document.getElementById('panel-success').classList.add('active');
-  cart = [];
-  saveCart();
-  updateCartUI();
-  [1, 2, 3].forEach(i => {
-    document.getElementById('step-' + i).classList.remove('active', 'done');
-  });
-  currentStep = 1;
-}
-
-/* ════════════════════════════════════════════════════════════
-   10. KULLANICI KİMLİK DOĞRULAMA (localStorage tabanlı)
-   ════════════════════════════════════════════════════════════ */
-function getUsers() {
-  try { return JSON.parse(localStorage.getItem(LS_USERS) || '[]'); } catch { return []; }
-}
-function saveUsers(users) { localStorage.setItem(LS_USERS, JSON.stringify(users)); }
-function getCurrentUser() {
-  try { return JSON.parse(localStorage.getItem(LS_USER) || 'null'); } catch { return null; }
-}
-
-function updateAuthNav() {
-  const user = getCurrentUser();
-  const authBtn = document.getElementById('auth-nav-btn');
-  if (!authBtn) return;
-  if (user) {
-    authBtn.textContent = '👤 ' + user.name.split(' ')[0];
-    authBtn.onclick = () => logoutUser();
-    authBtn.title = 'Çıkış Yap';
+  const idx = favorites.findIndex(f => f.id == id);
+  if (idx >= 0) {
+    favorites.splice(idx, 1);
+    showToast('Favorilerden Çıkarıldı', p.ad);
   } else {
-    authBtn.textContent = 'Giriş Yap';
-    authBtn.onclick = () => openAuthModal('login');
-    authBtn.title = 'Giriş Yap / Kayıt Ol';
+    favorites.push({ id, ad: p.ad, fiyat_fmt: p.indirimli_fiyat_fmt || p.fiyat_fmt,
+                     fiyat: parseFloat(p.indirimli_fiyat || p.fiyat), foto_url: p.foto_url });
+    showToast('Favorilere Eklendi ♥', p.ad);
   }
+
+  localStorage.setItem('vl_favs', JSON.stringify(favorites));
+  updateFavBadge();
+
+  // Kart ve modal butonlarını güncelle
+  const btn = document.getElementById('fav-btn-' + id);
+  if (btn) btn.textContent = favorites.some(f => f.id == id) ? '♥' : '♡';
+  const modalBtn = document.getElementById('modal-fav-btn');
+  if (modalBtn && modalProduct?.id == id)
+    modalBtn.textContent = favorites.some(f => f.id == id) ? 'Favorilerden Çıkar ♥' : 'Favorilere Ekle ♡';
 }
 
-function openAuthModal(tab = 'login') {
-  const modal = document.getElementById('auth-modal');
-  if (!modal) return;
-  modal.classList.add('open');
-  switchAuthTab(tab);
+function updateFavBadge() {
+  const badge = document.getElementById('fav-badge');
+  if (badge) badge.textContent = favorites.length;
+}
+
+function openFavorites() {
+  renderFavItems();
+  document.getElementById('fav-overlay')?.classList.add('open');
+  document.getElementById('fav-drawer')?.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closeAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  if (modal) modal.classList.remove('open');
+function closeFavorites() {
+  document.getElementById('fav-overlay')?.classList.remove('open');
+  document.getElementById('fav-drawer')?.classList.remove('open');
   document.body.style.overflow = '';
-  clearAuthErrors();
+}
+
+function renderFavItems() {
+  const el = document.getElementById('fav-items-container');
+  if (!el) return;
+
+  if (!favorites.length) {
+    el.innerHTML = `<div class="cart-empty">Henüz favori eklemediniz<br><br><em>♡ ile ürünleri favorileyin</em></div>`;
+    document.getElementById('fav-footer').style.display = 'none';
+    return;
+  }
+
+  el.innerHTML = favorites.map(f => `
+    <div class="cart-item">
+      <div class="cart-item-img">
+        ${f.foto_url
+          ? `<img src="${f.foto_url}" style="width:100%;height:100%;object-fit:cover"
+               onerror="this.outerHTML='<span style=font-size:2.5rem;opacity:.4>👗</span>'">`
+          : '<span style="font-size:2.5rem;opacity:.4">👗</span>'}
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${escHtml(f.ad)}</div>
+        <div class="cart-item-price">${f.fiyat_fmt}</div>
+        <div style="display:flex;gap:.5rem;margin-top:.5rem">
+          <button style="background:var(--gold);color:var(--bg);border:none;padding:.4rem .8rem;font-size:.7rem;cursor:pointer"
+                  onclick="addFavToCart(${f.id})">Sepete Ekle</button>
+          <button style="background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:.4rem .8rem;font-size:.7rem;cursor:pointer"
+                  onclick="removeFav(${f.id})">Kaldır</button>
+        </div>
+      </div>
+    </div>`
+  ).join('');
+
+  const footer = document.getElementById('fav-footer');
+  if (footer) footer.style.display = 'block';
+  const count = document.getElementById('fav-count-num');
+  if (count) count.textContent = favorites.length + ' ürün';
+}
+
+function addFavToCart(id) {
+  const f = favorites.find(x => x.id == id);
+  if (!f) return;
+  const existing = cart.find(c => c.id == id);
+  if (existing) { existing.adet++; }
+  else { cart.push({ ...f, beden: 'M', adet: 1 }); }
+  saveCart(); updateCartBadge();
+  showToast('Sepete Eklendi', f.ad);
+}
+
+function removeFav(id) {
+  favorites = favorites.filter(f => f.id != id);
+  localStorage.setItem('vl_favs', JSON.stringify(favorites));
+  updateFavBadge(); renderFavItems();
+  const btn = document.getElementById('fav-btn-' + id);
+  if (btn) btn.textContent = '♡';
+}
+
+function addAllFavToCart() {
+  favorites.forEach(f => {
+    const existing = cart.find(c => c.id == f.id);
+    if (existing) { existing.adet++; }
+    else { cart.push({ ...f, beden: 'M', adet: 1 }); }
+  });
+  saveCart(); updateCartBadge();
+  closeFavorites();
+  openCart();
+}
+
+/* ── AUTH (localStorage tabanlı demo) ──────────────────── */
+function updateAuthBtn() {
+  const user = JSON.parse(localStorage.getItem('vl_user') || 'null');
+  const btn  = document.getElementById('auth-nav-btn');
+  if (!btn) return;
+  if (user) {
+    btn.textContent = user.ad.split(' ')[0];
+    btn.onclick = logoutUser;
+  } else {
+    btn.textContent = 'Giriş Yap';
+    btn.onclick = () => openAuthModal('login');
+  }
+}
+
+function openAuthModal(tab) {
+  document.getElementById('auth-modal').classList.add('open');
+  switchAuthTab(tab);
+}
+
+function closeAuthModal() {
+  document.getElementById('auth-modal').classList.remove('open');
 }
 
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  document.querySelectorAll('.auth-panel').forEach(p => p.classList.toggle('active', p.id === 'auth-' + tab));
-}
-
-function clearAuthErrors() {
-  document.querySelectorAll('.auth-error').forEach(e => { e.textContent = ''; e.style.display = 'none'; });
-}
-
-function showAuthError(id, msg) {
-  const el = document.getElementById(id);
-  if (el) { el.textContent = msg; el.style.display = 'block'; }
-}
-
-function registerUser() {
-  clearAuthErrors();
-  const name  = document.getElementById('reg-name')?.value.trim();
-  const email = document.getElementById('reg-email')?.value.trim().toLowerCase();
-  const pass  = document.getElementById('reg-pass')?.value;
-  const pass2 = document.getElementById('reg-pass2')?.value;
-
-  if (!name)              return showAuthError('reg-error', 'Ad Soyad gereklidir.');
-  if (!email || !email.includes('@')) return showAuthError('reg-error', 'Geçerli bir e-posta girin.');
-  if (!pass || pass.length < 6)       return showAuthError('reg-error', 'Şifre en az 6 karakter olmalıdır.');
-  if (pass !== pass2)     return showAuthError('reg-error', 'Şifreler eşleşmiyor.');
-
-  const users = getUsers();
-  if (users.find(u => u.email === email)) return showAuthError('reg-error', 'Bu e-posta zaten kayıtlı.');
-
-  const newUser = { id: Date.now(), name, email, pass, createdAt: new Date().toISOString() };
-  users.push(newUser);
-  saveUsers(users);
-  localStorage.setItem(LS_USER, JSON.stringify({ id: newUser.id, name, email }));
-  closeAuthModal();
-  updateAuthNav();
-  showToast('Hoş Geldiniz! ✦', name + ' olarak kayıt oldunuz.');
+  document.getElementById('auth-login').classList.toggle('active', tab === 'login');
+  document.getElementById('auth-register').classList.toggle('active', tab === 'register');
 }
 
 function loginUser() {
-  clearAuthErrors();
-  const email = document.getElementById('login-email')?.value.trim().toLowerCase();
-  const pass  = document.getElementById('login-pass')?.value;
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-error');
 
-  if (!email) return showAuthError('login-error', 'E-posta gereklidir.');
-  if (!pass)  return showAuthError('login-error', 'Şifre gereklidir.');
-
-  const users = getUsers();
+  const users = JSON.parse(localStorage.getItem('vl_users') || '[]');
   const user  = users.find(u => u.email === email && u.pass === pass);
-  if (!user) return showAuthError('login-error', 'E-posta veya şifre hatalı.');
 
-  localStorage.setItem(LS_USER, JSON.stringify({ id: user.id, name: user.name, email: user.email }));
+  if (!user) { err.style.display='block'; err.textContent='E-posta veya şifre hatalı.'; return; }
+  err.style.display = 'none';
+  localStorage.setItem('vl_user', JSON.stringify(user));
   closeAuthModal();
-  updateAuthNav();
-  showToast('Hoş Geldiniz! ✦', user.name + ' olarak giriş yapıldı.');
+  updateAuthBtn();
+  showToast('Hoş Geldiniz', user.ad);
+}
+
+function registerUser() {
+  const ad    = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const err   = document.getElementById('reg-error');
+
+  if (!ad || !email || !pass) { err.style.display='block'; err.textContent='Tüm alanları doldurun.'; return; }
+  if (pass !== pass2)         { err.style.display='block'; err.textContent='Şifreler eşleşmiyor.'; return; }
+  if (pass.length < 6)        { err.style.display='block'; err.textContent='Şifre en az 6 karakter olmalı.'; return; }
+
+  const users = JSON.parse(localStorage.getItem('vl_users') || '[]');
+  if (users.find(u => u.email === email)) { err.style.display='block'; err.textContent='Bu e-posta zaten kayıtlı.'; return; }
+
+  const newUser = { ad, email, pass };
+  users.push(newUser);
+  localStorage.setItem('vl_users', JSON.stringify(users));
+  localStorage.setItem('vl_user', JSON.stringify(newUser));
+  err.style.display = 'none';
+  closeAuthModal();
+  updateAuthBtn();
+  showToast('Kayıt Başarılı', 'Hoş geldiniz, ' + ad + '!');
 }
 
 function logoutUser() {
-  localStorage.removeItem(LS_USER);
-  updateAuthNav();
-  showToast('Çıkış Yapıldı', 'Görüşmek üzere!');
+  localStorage.removeItem('vl_user');
+  updateAuthBtn();
+  showToast('Çıkış Yapıldı', 'Görüşürüz!');
 }
 
-/* ════════════════════════════════════════════════════════════
-   11. SAYFA SİSTEMİ, SCROLL, REVEAL
-   ════════════════════════════════════════════════════════════ */
-function showPage(page) {
+/* ── CHECKOUT STEPS ─────────────────────────────────────── */
+let currentStep = 1;
+
+function nextStep() {
+  if (currentStep >= 3) { placeOrder(); return; }
+  document.getElementById(`panel-${currentStep}`).classList.remove('active');
+  document.getElementById(`step-${currentStep}`).classList.add('done');
+  currentStep++;
+  document.getElementById(`panel-${currentStep}`).classList.add('active');
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+}
+
+function prevStep() {
+  if (currentStep <= 1) return;
+  document.getElementById(`panel-${currentStep}`).classList.remove('active');
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep--;
+  document.getElementById(`panel-${currentStep}`).classList.add('active');
+}
+
+function placeOrder() {
+  document.getElementById(`panel-${currentStep}`).classList.remove('active');
+  document.getElementById('panel-success').classList.add('active');
+  cart = [];
+  saveCart();
+  updateCartBadge();
+}
+
+/* ── PAGE NAVIGATION ────────────────────────────────────── */
+function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(page + '-page').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const el = document.getElementById(name + '-page');
+  if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
 }
 
-function scrollToSection(id) {
+function scrollTo(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
-window.scrollTo_section = scrollToSection;
 
-function revealOnScroll() {
-  document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight - 60) el.classList.add('visible');
-  });
+/* ── NEWSLETTER ─────────────────────────────────────────── */
+function subscribeNewsletter() {
+  const email = document.getElementById('nl-email').value;
+  if (!email.includes('@')) return;
+  document.getElementById('nl-success').style.display = 'block';
+  document.getElementById('nl-email').value = '';
 }
 
-/* ════════════════════════════════════════════════════════════
-   12. CURSOR
-   ════════════════════════════════════════════════════════════ */
-const cursor = document.getElementById('cursor');
-const ring   = document.getElementById('cursor-ring');
-let rx = 0, ry = 0;
+/* ── TOAST ──────────────────────────────────────────────── */
+let toastTimer;
+function showToast(title, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-msg').textContent   = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
 
-if (cursor && ring) {
+/* ── CURSOR ─────────────────────────────────────────────── */
+function initCursor() {
+  const c  = document.getElementById('cursor');
+  const cr = document.getElementById('cursor-ring');
+  if (!c || !cr || window.innerWidth < 768) return;
+
   document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
+    c.style.left  = e.clientX + 'px';
+    c.style.top   = e.clientY + 'px';
+    setTimeout(() => {
+      cr.style.left = e.clientX + 'px';
+      cr.style.top  = e.clientY + 'px';
+    }, 80);
   });
-  (function animRing() {
-    rx += (parseFloat(cursor.style.left || 0) - rx) * 0.12;
-    ry += (parseFloat(cursor.style.top  || 0) - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(animRing);
-  })();
-  document.querySelectorAll('button,a').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('cursor-grow'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-grow'));
+
+  document.querySelectorAll('a,button,.cat-card,.product-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cr.classList.add('cursor-grow'));
+    el.addEventListener('mouseleave', () => cr.classList.remove('cursor-grow'));
   });
 }
 
-/* ════════════════════════════════════════════════════════════
-   13. TESTİMONİALS SLIDER
-   ════════════════════════════════════════════════════════════ */
-let slideIndex = 0;
+/* ── NAV ────────────────────────────────────────────────── */
+function initNav() {
+  const nav = document.getElementById('main-nav');
+  if (!nav) return;
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+}
+
+function toggleMenu() {
+  const ham = document.getElementById('hamburger');
+  const mob = document.getElementById('mobile-nav');
+  if (!ham || !mob) return;
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+  document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+}
+
+function closeMenu() {
+  document.getElementById('hamburger')?.classList.remove('open');
+  document.getElementById('mobile-nav')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('hamburger')?.addEventListener('click', toggleMenu);
+
+/* ── SLIDER ─────────────────────────────────────────────── */
+let slideIdx = 0;
 function initSlider() {
-  const slides        = document.querySelectorAll('.testimonial-slide');
-  const dotsContainer = document.getElementById('slider-dots');
-  if (!slides.length || !dotsContainer) return;
-  dotsContainer.innerHTML = '';
+  const slides = document.querySelectorAll('.testimonial-slide');
+  const dotsEl = document.getElementById('slider-dots');
+  if (!slides.length || !dotsEl) return;
+
   slides.forEach((_, i) => {
     const d = document.createElement('div');
     d.className = 'slider-dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goSlide(i);
-    dotsContainer.appendChild(d);
+    d.onclick   = () => goSlide(i);
+    dotsEl.appendChild(d);
   });
-  function goSlide(n) {
-    slides[slideIndex].classList.remove('active');
-    dotsContainer.children[slideIndex]?.classList.remove('active');
-    slideIndex = (n + slides.length) % slides.length;
-    slides[slideIndex].classList.add('active');
-    dotsContainer.children[slideIndex]?.classList.add('active');
-  }
-  window.nextSlide = () => goSlide(slideIndex + 1);
-  window.prevSlide = () => goSlide(slideIndex - 1);
-  setInterval(window.nextSlide, 5000);
 }
 
-/* ════════════════════════════════════════════════════════════
-   14. BÜLTEN
-   ════════════════════════════════════════════════════════════ */
-function subscribeNewsletter() {
-  const email = document.getElementById('nl-email').value;
-  if (!email.includes('@')) { showToast('Hata', 'Geçerli bir e-posta girin'); return; }
-  document.querySelector('.newsletter-form').style.display = 'none';
-  document.getElementById('nl-success').style.display = 'block';
-  showToast('Harika!', 'Bültene başarıyla kayıt oldunuz');
+function goSlide(idx) {
+  const slides = document.querySelectorAll('.testimonial-slide');
+  const dots   = document.querySelectorAll('.slider-dot');
+  slides[slideIdx]?.classList.remove('active');
+  dots[slideIdx]?.classList.remove('active');
+  slideIdx = (idx + slides.length) % slides.length;
+  slides[slideIdx]?.classList.add('active');
+  dots[slideIdx]?.classList.add('active');
 }
 
-/* ════════════════════════════════════════════════════════════
-   15. TOAST BİLDİRİMİ
-   ════════════════════════════════════════════════════════════ */
-function showToast(title, msg) {
-  const toast = document.getElementById('toast');
-  if (!toast) return;
-  document.getElementById('toast-title').textContent = title;
-  document.getElementById('toast-msg').textContent   = msg || '';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3200);
+function nextSlide() { goSlide(slideIdx + 1); }
+function prevSlide() { goSlide(slideIdx - 1); }
+
+setInterval(() => nextSlide(), 5000);
+
+/* ── REVEAL ON SCROLL ───────────────────────────────────── */
+function initReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 
-/* ════════════════════════════════════════════════════════════
-   16. KART NUMARASI FORMATI
-   ════════════════════════════════════════════════════════════ */
-function formatCard(inp) {
-  let v = inp.value.replace(/\D/g, '');
-  inp.value = v.match(/.{1,4}/g)?.join(' ') || v;
+/* ── MARQUEE ────────────────────────────────────────────── */
+function duplicateMarquee() {
+  const track = document.getElementById('marquee-track');
+  if (track && track.children.length === 1) {
+    track.appendChild(track.children[0].cloneNode(true));
+  }
 }
 
-/* ════════════════════════════════════════════════════════════
-   17. HAMBURGER MENÜ
-   ════════════════════════════════════════════════════════════ */
-function initHamburger() {
-  const hamburger = document.getElementById('hamburger');
-  const mobileNav = document.getElementById('mobile-nav');
-  if (!hamburger || !mobileNav) return;
-  function toggleMenu() {
-    hamburger.classList.toggle('open');
-    mobileNav.classList.toggle('open');
-    document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
-  }
-  window.closeMenu = function () {
-    hamburger.classList.remove('open');
-    mobileNav.classList.remove('open');
-    document.body.style.overflow = '';
-  };
-  hamburger.addEventListener('click', toggleMenu);
+/* ── CARD FORMAT ────────────────────────────────────────── */
+function formatCard(input) {
+  let v = input.value.replace(/\D/g, '').substring(0, 16);
+  input.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
 }
 
-/* ════════════════════════════════════════════════════════════
-   18. NAVBAR SCROLL
-   ════════════════════════════════════════════════════════════ */
-window.addEventListener('scroll', () => {
-  const nav = document.getElementById('main-nav');
-  if (nav) nav.classList.toggle('scrolled', window.scrollY > 80);
-  revealOnScroll();
-});
-
-/* ════════════════════════════════════════════════════════════
-   19. KLAVYE KISAYOLLARI
-   ════════════════════════════════════════════════════════════ */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeModalDirect();
-    closeCart();
-    closeFavorites();
-    closeAuthModal();
-    if (typeof closeMenu === 'function') closeMenu();
-  }
-  // Enter ile arama
-  if (e.key === 'Enter' && document.activeElement?.id === 'search-input') {
-    scrollToSection('collections');
-  }
-});
-
-/* ════════════════════════════════════════════════════════════
-   20. UYGULAMA BAŞLANGICI
-   ════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  loadFromStorage();
-  updateCartUI();
-  updateFavCount();
-  loadProducts();
-  initSlider();
-  initHamburger();
-  revealOnScroll();
-  updateAuthNav();
-});
-
-/* ════════════════════════════════════════════════════════════
-   21. localStorage DURUM GÖSTERGESİ
-   ════════════════════════════════════════════════════════════ */
-(function patchSaveWithIndicator() {
-  function flashIndicator() {
-    const el = document.getElementById('storage-indicator');
-    if (!el) return;
-    el.classList.add('show');
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 1800);
-  }
-  const _origSaveCart = saveCart;
-  saveCart = function() { _origSaveCart(); flashIndicator(); };
-  const _origSaveFav  = saveFavorites;
-  saveFavorites = function() { _origSaveFav(); flashIndicator(); };
-})();
+/* ── UTIL ───────────────────────────────────────────────── */
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
