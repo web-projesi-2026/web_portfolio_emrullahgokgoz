@@ -27,6 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ── PRODUCTS FROM API ──────────────────────────────────── */
+/* ── JSON CACHE (GitHub Pages — sunucu yok) ─────────────── */
+let _productsCache = null;
+
+async function fetchAllProducts() {
+  if (_productsCache) return _productsCache;
+  // Repo kök dizinindeki data/products.json'u oku
+  const base = document.querySelector('base')?.href || location.href.replace(/[^/]*$/, '');
+  const url  = new URL('data/products.json', base).href;
+  const res  = await fetch(url);
+  if (!res.ok) throw new Error('products.json yüklenemedi');
+  _productsCache = await res.json();
+  return _productsCache;
+}
+
 async function loadProducts(kategori = 'tumu', q = '', siralama = 'default') {
   const grid = document.getElementById('products-grid');
   if (!grid) return;
@@ -38,16 +52,37 @@ async function loadProducts(kategori = 'tumu', q = '', siralama = 'default') {
     </div>`;
 
   try {
-    const params = new URLSearchParams({ kategori, siralama });
-    if (q) params.set('q', q);
+    let data = await fetchAllProducts();
 
-    const res  = await fetch(`/api/urunler.php?${params}`);
-    const data = await res.json();
+    // ── İstemci tarafı filtrele ──
+    if (kategori && kategori !== 'tumu') {
+      data = data.filter(p => p.kategori === kategori);
+    }
+    if (q) {
+      const term = q.toLowerCase();
+      data = data.filter(p =>
+        p.ad.toLowerCase().includes(term) ||
+        (p.aciklama || '').toLowerCase().includes(term) ||
+        (p.kategori || '').toLowerCase().includes(term)
+      );
+    }
 
-    allProducts   = data;
+    // ── İstemci tarafı sırala ──
+    if (siralama === 'fiyat_asc') {
+      data = [...data].sort((a, b) => (a.indirimli_fiyat || a.fiyat) - (b.indirimli_fiyat || b.fiyat));
+    } else if (siralama === 'fiyat_desc') {
+      data = [...data].sort((a, b) => (b.indirimli_fiyat || b.fiyat) - (a.indirimli_fiyat || a.fiyat));
+    } else if (siralama === 'yeni') {
+      data = [...data].sort((a, b) => b.id - a.id);
+    } else if (siralama === 'one_cikan') {
+      data = [...data].sort((a, b) => (b.one_cikan ? 1 : 0) - (a.one_cikan ? 1 : 0));
+    }
+
+    allProducts   = await fetchAllProducts(); // tüm liste (modal için)
     filteredProds = data;
     renderProducts(data);
   } catch (err) {
+    console.error(err);
     grid.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)">
         <p style="font-family:var(--ff-serif);font-style:italic">Ürünler yüklenirken hata oluştu.</p>

@@ -1019,6 +1019,69 @@ footer {
   margin: 1rem 0; letter-spacing: .1em;
 }
 
+
+/* ── FAVORITES DRAWER ───────────────────────────────────── */
+.fav-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.7);
+  z-index:2000; opacity:0; pointer-events:none; transition:opacity .4s;
+}
+.fav-overlay.open { opacity:1; pointer-events:all; }
+.fav-drawer {
+  position:fixed; top:0; right:0; bottom:0; width:420px;
+  background:var(--bg2); z-index:2001;
+  transform:translateX(100%); transition:transform .4s var(--ease);
+  display:flex; flex-direction:column;
+  border-left:1px solid rgba(201,168,76,.1);
+}
+.fav-drawer.open { transform:translateX(0); }
+.fav-header {
+  padding:2rem; border-bottom:1px solid rgba(201,168,76,.1);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.fav-header h2 {
+  font-family:var(--ff-head); font-size:1.5rem; letter-spacing:.1em; color:var(--cream);
+}
+.fav-close {
+  background:none; border:1px solid rgba(201,168,76,.2); color:var(--muted);
+  width:36px; height:36px; cursor:pointer; font-size:1rem;
+  display:flex; align-items:center; justify-content:center; transition:all .3s;
+}
+.fav-close:hover { border-color:var(--accent); color:var(--accent); }
+.fav-items { flex:1; overflow-y:auto; padding:1.5rem; }
+.fav-footer {
+  padding:1.5rem 2rem; border-top:1px solid rgba(201,168,76,.1);
+}
+.fav-count {
+  display:flex; justify-content:space-between; margin-bottom:1rem;
+  font-size:.85rem; color:var(--muted);
+}
+.fav-all-btn {
+  width:100%; padding:1rem; background:var(--gold); color:var(--bg);
+  border:none; font-family:var(--ff-body); font-size:.82rem;
+  letter-spacing:.15em; text-transform:uppercase; cursor:pointer;
+  transition:background .3s;
+}
+.fav-all-btn:hover { background:var(--gold2); }
+.fav-nav-btn {
+  background:none; border:1px solid rgba(201,168,76,.4); color:var(--gold);
+  padding:.5rem 1.2rem; font-family:var(--ff-body); font-size:.75rem;
+  letter-spacing:.12em; text-transform:uppercase; cursor:pointer;
+  position:relative; transition:background .3s, border-color .3s;
+}
+.fav-nav-btn:hover { background:rgba(201,168,76,.1); }
+.fav-badge {
+  position:absolute; top:-8px; right:-8px; background:var(--accent);
+  color:#fff; border-radius:50%; width:18px; height:18px; font-size:.65rem;
+  display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+/* Storage indicator */
+#storage-indicator {
+  position:fixed; bottom:1rem; left:1rem; z-index:999;
+  background:rgba(10,10,8,.85); border:1px solid rgba(201,168,76,.2);
+  color:var(--muted); font-size:.68rem; padding:.4rem .8rem;
+  letter-spacing:.05em; pointer-events:none; border-radius:2px;
+  opacity:0; animation: fadeIn .5s .5s forwards;
+}
 </style>
 </head>
 <body>
@@ -1454,12 +1517,19 @@ footer {
 <!-- Favorites Overlay -->
 <div class="fav-overlay" id="fav-overlay" onclick="closeFavorites()"></div>
 <div class="fav-drawer" id="fav-drawer">
-  <div class="cart-header">
+  <div class="fav-header">
     <h2>FAVORİLERİM</h2>
-    <button class="cart-close" onclick="closeFavorites()">✕</button>
+    <button class="fav-close" onclick="closeFavorites()">✕</button>
   </div>
-  <div class="cart-items" id="fav-items-container">
+  <div class="fav-items" id="fav-items-container">
     <div class="cart-empty">Henüz favori eklemediniz<br><br><em>♡ ile ürünleri favorileyin</em></div>
+  </div>
+  <div class="fav-footer" id="fav-footer" style="display:none;">
+    <div class="fav-count">
+      <span>Favori Ürünler</span>
+      <span class="fav-count-num" id="fav-count-num">0 ürün</span>
+    </div>
+    <button class="fav-all-btn" onclick="addAllFavToCart()">Tümünü Sepete Ekle →</button>
   </div>
 </div>
 

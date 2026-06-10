@@ -1,0 +1,9 @@
+# GitHub Pages — Jekyll config
+# PHP dosyalarını görmezden gel
+exclude:
+  - admin/
+  - api/
+  - includes/
+  - database.sql
+  - database_infinityfree.sql
+  - "*.php"

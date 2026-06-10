@@ -1,111 +1,61 @@
-# VogueLine Admin Paneli — Kurulum Kılavuzu
+<div align="center">
 
-## 📁 Dosya Yapısı
+# ✦ VogueLine
 
-```
-vogueline/
-├── admin/
-│   ├── giris.php          ← Giriş sayfası
-│   ├── index.php          ← Dashboard
-│   ├── urunler.php        ← Ürün listesi
-│   ├── urun_ekle.php      ← Ürün ekleme
-│   ├── urun_duzenle.php   ← Ürün düzenleme
-│   ├── kategoriler.php    ← Kategori yönetimi
-│   ├── ayarlar.php        ← Şifre değiştirme
-│   ├── cikis.php          ← Çıkış
-│   └── layouts/
-│       ├── header.php
-│       └── footer.php
-├── includes/
-│   └── config.php         ← VT bağlantısı (buraya bilgilerinizi girin)
-├── uploads/               ← Yüklenen fotoğraflar burada saklanır
-│   └── .htaccess          ← Güvenlik: PHP çalıştırmayı engeller
-├── database.sql           ← VT kurulum scripti
-└── README.md
-```
+**Premium Moda & Koleksiyon Platformu — GitHub Pages Versiyonu**
+
+[![Canlı Site](https://img.shields.io/badge/🌐_GitHub_Pages-vogueline-c9a84c?style=for-the-badge)](https://kullanici.github.io/vogueline)
+[![JSON](https://img.shields.io/badge/Veri-products.json-f7df1e?style=for-the-badge&logo=json&logoColor=black)](data/products.json)
+
+</div>
 
 ---
 
-## 🚀 Kurulum (XAMPP / phpMyAdmin)
+## 🌐 Bu Versiyon Hakkında
 
-### 1. Dosyaları Kopyalayın
-Tüm `vogueline/` klasörünü şuraya kopyalayın:
-```
-C:\xampp\htdocs\vogueline\
-```
+Bu, VogueLine'ın **statik GitHub Pages versiyonudur**. PHP/MySQL gerektirmez; ürünler `data/products.json` dosyasından okunur.
 
-### 2. Veritabanını Kurun
-1. Tarayıcıda `http://localhost/phpmyadmin` adresine gidin
-2. Sol menüde **"Yeni"** ye tıklayın
-3. Üst menüden **SQL** sekmesine tıklayın
-4. `database.sql` dosyasının içeriğini kopyalayıp yapıştırın
-5. **Çalıştır** düğmesine basın
-
-### 3. config.php Düzenleyin
-`includes/config.php` dosyasını açın:
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'vogueline_db');
-define('DB_USER', 'root');    // phpMyAdmin kullanıcı adınız
-define('DB_PASS', '');        // XAMPP varsayılanı boş şifredir
-```
-
-### 4. Uploads Klasörü İzni
-`uploads/` klasörünün yazılabilir olduğundan emin olun.
-- **XAMPP Windows**: Otomatik olarak çalışır
-- **Linux/Mac**: `chmod 775 uploads/`
-
-### 5. Admin Paneline Giriş
-```
-http://localhost/vogueline/admin/giris.php
-```
-- **Kullanıcı adı**: admin
-- **Şifre**: vogueline2024
-
-> ⚠️ **Güvenlik**: Giriş yaptıktan sonra hemen şifrenizi değiştirin!
-> Ayarlar → Şifre Değiştir
-
----
-
-## 🔑 Varsayılan Şifre Hash'i Sorunları
-
-Eğer giriş yapamıyorsanız, phpMyAdmin'de SQL ile şifreyi manuel güncelleyin:
-```sql
-UPDATE adminler
-SET sifre_hash = '$2y$12$...'   -- aşağıda üretilecek hash
-WHERE kullanici_adi = 'admin';
-```
-
-PHP ile hash üretmek için (htdocs'ta geçici bir dosya oluşturun):
-```php
-<?php echo password_hash('yeni_sifreniz', PASSWORD_BCRYPT, ['cost'=>12]); ?>
-```
-
----
-
-## 📋 Özellikler
-
-| Özellik | Detay |
+| Özellik | Durum |
 |---------|-------|
-| ✅ Ürün Ekleme | Ad, marka, kategori, açıklama, fiyat, beden, renk, stok |
-| ✅ Çoklu Fotoğraf | Birden fazla ürün fotoğrafı, drag & drop destekli |
-| ✅ Fotoğraf Silme | Mevcut fotoğrafları tek tek silebilirsiniz |
-| ✅ Ürün Güncelleme | Tüm alanlar düzenlenebilir |
-| ✅ Ürün Silme | Tekil veya toplu silme |
-| ✅ Kategori Yönetimi | Ekleme, silme, aktif/pasif toggle |
-| ✅ Arama & Filtre | İsim, marka, kategori, durum bazlı filtre |
-| ✅ Sayfalama | 15 ürün/sayfa |
-| ✅ Dashboard | Anlık istatistikler + son ürünler |
-| ✅ Güvenli Giriş | bcrypt şifreleme, oturum yönetimi |
-| ✅ Şifre Değiştirme | Admin paneli üzerinden |
+| Ürün listeleme | ✅ JSON'dan |
+| Filtreleme & arama | ✅ İstemci tarafı |
+| Sepet & favoriler | ✅ localStorage |
+| Admin paneli | ❌ (sunucu gerektirir) |
 
 ---
 
-## 🛡️ Güvenlik
+## 🚀 GitHub Pages'e Deploy
 
-- Şifreler bcrypt (cost=12) ile hash'lenir
-- PDO prepared statements — SQL injection koruması
-- `htmlspecialchars` — XSS koruması
-- Dosya tipi kontrolü (MIME type)
-- `uploads/.htaccess` — PHP yürütme engeli
-- Oturum kontrolü tüm sayfalarda aktif
+1. Bu repoyu fork'la veya kendi hesabına yükle
+2. **Settings → Pages → Source:** `main` branch, `/ (root)`
+3. Birkaç dakika bekle → `https://kullanici.github.io/vogueline`
+
+---
+
+## 🛍️ Ürün Ekleme
+
+`data/products.json` dosyasını düzenle:
+
+```json
+{
+  "id": 10,
+  "ad": "Ürün Adı",
+  "kategori": "elbise",
+  "fiyat": 1500,
+  "fiyat_fmt": "1.500 ₺",
+  "indirimli_fiyat": null,
+  "indirimli_fiyat_fmt": null,
+  "aciklama": "Ürün açıklaması...",
+  "foto_url": "https://ornek.com/resim.jpg",
+  "bedenler": ["S", "M", "L"],
+  "one_cikan": false
+}
+```
+
+**Kategoriler:** `elbise`, `ceket`, `bluz`, `pantolon`, `etek`, `dis_giyim`, `kazak`
+
+---
+
+<div align="center">
+  <sub>© 2026 VogueLine — Tüm hakları saklıdır.</sub>
+</div>
